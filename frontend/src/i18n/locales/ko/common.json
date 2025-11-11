@@ -1,0 +1,611 @@
+{
+  "nav": {
+    "home": "홈",
+    "menuPrices": "메뉴 및 가격",
+    "featuredProducts": "추천 제품",
+    "about": "회사 소개",
+    "aboutSpa": "SEN SPA 다낭 소개",
+    "happyGuests": "고객 후기",
+    "gallery": "갤러리",
+    "contact": "연락처",
+    "bookOnline": "온라인 예약",
+    "services": "서비스"
+  },
+  "banner": {
+    "hot": "핫⚡",
+    "discount": "온라인 예약 시 즉시 10% 할인!"
+  },
+  "location": {
+    "findUsOnGoogleMaps": "Google 지도에서 찾기"
+  },
+  "steps": {
+    "reserve": "예약",
+    "select": "선택",
+    "confirm": "확인!"
+  },
+  "welcome": "우리 웹사이트에 오신 것을 환영합니다",
+  "datePicker": {
+    "selectDate": "날짜 선택"
+  },
+  "booking": {
+    "title": "스파 예약",
+    "spaName": "SEN SPA 다낭",
+    "location": "위치",
+    "date": "날짜",
+    "time": "시간",
+    "guest": "게스트",
+    "selectTime": "시간 선택",
+    "selectGuests": "게스트 수 선택",
+    "selectATime": "시간 선택",
+    "selectGuestsPlaceholder": "게스트 수 선택",
+    "bookNow": "지금 예약하기!",
+    "availabilityForToday": "오늘의 예약 가능 시간",
+    "morning": "오전",
+    "afternoon": "오후",
+    "evening": "저녁",
+    "numberOfGuests": "게스트 수",
+    "fillAllFields": "모든 필드를 입력해주세요",
+    "appointmentSummary": "예약 요약",
+    "selectTreatmentForGuest": "게스트 의 트리트먼트 선택",
+    "selectTreatment": "트리트먼트 선택",
+    "applyThisSameTreatmentForAllGuests": "모든 게스트에게 동일한 처리를 적용합니다"
+  },
+  "footer": {
+    "ourLocations": "위치",
+    "openDaily": "운영 시간: 매일 오전 10시 - 오후 9시",
+    "followUs": "팔로우하기",
+    "spaName": "SEN SPA DA NANG",
+    "paymentMethods": "결제 방법",
+    "copyright": "Copyright {{year}} © SEN SPA DA NANG. 모든 권리 보유.",
+    "quickLinks": {
+      "aboutUs": "회사 소개",
+      "featuredProducts": "추천 제품",
+      "bookOnline": "온라인 예약",
+      "spaMenu": "스파 메뉴",
+      "contactUs": "연락처"
+    }
+  },
+  "thankYou": {
+    "title": "SEN SPA 다낭 예약해 주셔서 감사합니다!",
+    "subtitle": "예약을 접수했습니다.",
+    "emailNote": "이메일 주소가 정확한지 확인해 주세요. 그렇지 않으면 고객님과 연락할 수 없습니다. 곧 확인 이메일을 보내드리겠습니다. 시간이나 트리트먼트를 변경해야 하는 경우 언제든지",
+    "contactUs": "문의하기",
+    "backToHome": "홈페이지로 돌아가기"
+  },
+  "reservation": {
+    "title": "예약",
+    "contactUsByPhone": "전화/Wechat/ Kakao Talk / WhatsApp로 문의하기",
+    "spaAddress": "SEN SPA 다낭: 21 Thai Phien Street, Phuoc Ninh Ward, Hai Chau District, Da Nang",
+    "welcomeMessage": "SEN SPA 다낭에 오신 것을 환영합니다! 다음 방법 중 하나로 예약하실 수 있습니다:",
+    "waysToBook": {
+      "callPhone": "전화로 문의하기",
+      "sendMessage": "Whatsapp, Kakao, Wechat, Zalo로 메시지 보내기",
+      "bookOnline": "웹사이트에서 온라인 예약하고 즉시 확인 받기"
+    },
+    "maxGuests": "온라인 예약 플랫폼에서는 한 번에 최대 10명까지 예약할 수 있습니다. 다음을 선택하세요:",
+    "confirmationMessage": "예약을 접수하는 대로 직원이 확인 이메일 또는 메시지를 보내드립니다.",
+    "bookingSteps": {
+      "location": "예약하고 싶은 스파 위치",
+      "guests": "게스트 수",
+      "dateTime": "날짜 및 시간",
+      "services": "서비스 및 시간"
+    },
+    "aboutReservation": {
+      "title": "예약에 대해",
+      "description": "요통, 피부 질환, 부상, 임신 등 기존 건강 상태가 있는 경우 사전에 알려주시기 바랍니다. 최상의 서비스를 제공할 수 있도록 조정하겠습니다."
+    },
+    "aboutChange": {
+      "title": "예약 변경/취소에 대해",
+      "description": "예약 변경 또는 취소는 약속 시간 최소 24시간 전에 해주시기 바랍니다. 이를 통해 다른 고객의 예약을 적절히 받을 수 있는 충분한 시간을 확보할 수 있습니다."
+    },
+    "aboutPayment": {
+      "title": "결제에 대해",
+      "description": "현금 또는 신용카드로 결제할 수 있습니다. 결제는 트리트먼트 후에 이루어집니다. 팁은 필수는 아니지만 항상 환영합니다."
+    }
+  },
+  "contact": {
+    "title": "문의하기",
+    "contactUsByEmail": "이메일로 문의하기",
+    "welcomeMessage": "독특한 트리트먼트로 고객님을 모시겠습니다. SEN SPA 다낭에서 만나뵙기를 기대합니다.",
+    "form": {
+      "fullName": "성명",
+      "emailAddress": "이메일 주소",
+      "title": "제목",
+      "content": "내용",
+      "send": "보내기"
+    },
+    "contactUsByPhone": "전화로 문의하기",
+    "scanQRCode": "이 코드를 스캔하여 WhatsApp 또는 Kakao Talk 채팅을 시작하세요",
+    "messages": {
+      "success": "메시지가 성공적으로 전송되었습니다!",
+      "error": "메시지 전송에 실패했습니다. 다시 시도해주세요."
+    }
+  },
+  "about": {
+    "title": "회사 소개",
+    "welcomeTitle": "SEN SPA 다낭에 오신 것을 환영합니다",
+    "paragraph1": "관광 분야에서 10년 이상, 스파 분야에서 직접 6년간 근무한 경험을 가진 SEN SPA 다낭의 설립자는 긴 여행 후 사람들이 필요로 하는 것을 듣고, 이해하고, 진정으로 연결할 수 있는 기회를 가졌습니다: 휴식, 재충전, 균형을 찾는 장소.",
+    "paragraph2": "평화롭고 환영하는 해변 도시인 다낭에 대한 깊은 사랑과 여기에 정제된 웰니스 목적지를 만들고자 하는 열망에서 SEN SPA 다낭은 2023년에 설립되었습니다.",
+    "paragraph3": "SEN SPA는 단순한 스파가 아닙니다. 전문 테라피스트의 케어를 받고, 천천히 숨을 쉬며, 몸과 마음 모두를 회복시키는 평온한 공간을 즐길 수 있는 경험입니다.",
+    "paragraph4": "Sen Spa에서의 모든 휴식의 순간은 우리가 여러분과 공유하고 싶은 아름다운 이야기의 일부라고 믿습니다: 평화의 이야기, 작지만 완전한 기쁨의 이야기, 현대 생활 한가운데에서.",
+    "address": "21 Thai Phien Street, Phuoc Ninh Ward, Hai Chau District, Da Nang",
+    "openDaily": "운영 시간: 오전 10:00 - 오후 09:00",
+    "phoneEnquiry": "전화 또는 WhatsApp/Kakao 문의:",
+    "phoneNumber": "+84 976 591 515",
+    "bookNow": "지금 예약하기"
+  },
+  "home": {
+    "heroBanner": "모든 감각을 위한 편안한 휴식처",
+    "subtitle": "다낭의 중심에서 모든 감각을 위한 편안한 휴식처.",
+    "about": {
+      "founded": "2023년에 설립되어 여행자와 지역 주민 모두를 위한 편안한 스파 경험을 제공하는 것을 목표로 합니다.",
+      "location": "도시 중심에 위치하여 전문적이고 숙련된 치료사 팀을 자랑합니다.",
+      "services": "SEN SPA 다낭은 다양한 발 및 바디 테라피, 페이셜 케어, 스파 패키지를 제공합니다.",
+      "viewLess": "간략히 보기",
+      "viewAll": "전체 보기"
+    },
+    "featuredProducts": {
+      "title": "추천 제품",
+      "description": "독점적인 스파 패키지와 특별 혜택을 발견하세요",
+      "viewSpaMenu": "스파 메뉴 보기",
+      "duration": "시간:",
+      "price": "가격:"
+    },
+    "testimonials": {
+      "title": "고객 후기...",
+      "description": "고객 후기를 읽는 것을 저희만큼 즐기시기를 바랍니다."
+    },
+    "happyGuests": {
+      "title": "행복한 고객들",
+      "description": "스파에 오신 순간순간을 소중히 여깁니다. 기쁨을 나누세요!",
+      "seeMoreReview": "후기 더 보기"
+    },
+    "whyChooseUs": {
+      "title": "왜 SEN SPA DA NANG 선택해야 할까요?",
+      "description": "SEN SPA 다낭을 방문하여 일상에서 천국 같은 휴식을 취하세요",
+      "features": {
+        "couples": {
+          "title": "커플, 그룹, 혼자 여행하는 분들에게 완벽",
+          "description": "혼자 여행하든, 신혼여행이든, 어린 아이들과 함께든 항상 제공할 것이 있습니다."
+        },
+        "location": {
+          "title": "편리하고 중심적인 위치",
+          "description": "모든 스파는 용 다리, 한강, 콘 마켓과 같은 다낭의 상징적인 랜드마크에서 도보 거리에 있습니다."
+        },
+        "therapists": {
+          "title": "숙련된 치료사와 세심한 접수 직원",
+          "description": "처음부터 끝까지 친절한 직원들이 따뜻하게 맞이하고 전문적으로 돌봐드립니다."
+        }
+      }
+    },
+    "bookYourSpaExperience": "스파 경험 예약하기"
+  },
+  "menu": {
+    "title": "스파 메뉴 및 가격",
+    "tabs": {
+      "bodyMassage": "바디 마사지",
+      "footMassage": "발 마사지",
+      "facialTreatment": "페이셜 케어",
+      "package": "패키지",
+      "combo": "콤보"
+    },
+    "noteLabel": "참고:",
+    "note": "한 번의 방문에서 여러 트리트먼트를 선택할 수 있습니다. 3명 이상의 그룹의 경우",
+    "contactUs": "문의하기",
+    "noteEnd": "를 해주세요. 고객님을 모시게 되어 기쁩니다!",
+    "description": "편안한 스파 트리트먼트와 웰니스를 발견하세요",
+    "monthlyFeaturedProducts": "월간 추천 제품",
+    "descriptionEnd": "상담 및 예약은 핫라인 +84 976 591 515로 전화해주세요.",
+    "downloadPdfMenu": "PDF 메뉴 다운로드"
+  },
+  "services": {
+    "1": {
+      "name17": {
+        "title": "센 시그니처 마사지 4in1",
+        "description": "뜨거운 돌, 타이, 아로마, 딥티슈를 결합한 마사지입니다.",
+        "duration": "90분"
+      },
+      "name19": {
+        "title": "바디 스크럽",
+        "description": "소금, 커피, 녹차 중에서 선택 가능합니다.",
+        "duration": "30분"
+      },
+      "name18": {
+        "title": "센 시그니처 마사지 4in1 (120분)",
+        "description": "뜨거운 돌, 타이, 아로마, 딥티슈를 결합한 마사지입니다.",
+        "duration": "120분"
+      },
+      "name16": {
+        "title": "딥티슈 마사지 (90분)",
+        "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강.",
+        "duration": "90분"
+      },
+      "name15": {
+        "title": "딥티슈 마사지 (75분)",
+        "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강.",
+        "duration": "75분"
+      },
+      "name14": {
+        "title": "딥티슈 마사지 (60분)",
+        "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강.",
+        "duration": "60분"
+      },
+      "name13": {
+        "title": "핫 스톤 마사지 (90분)",
+        "description": "따뜻한 돌과 오일을 이용한 전신 마사지. 압력: 약 - 중간.",
+        "duration": "90분"
+      },
+      "name12": {
+        "title": "핫 스톤 마사지 (75분)",
+        "description": "따뜻한 돌과 오일을 이용한 전신 마사지. 압력: 약 - 중간.",
+        "duration": "75분"
+      },
+      "name11": {
+        "title": "타이 스트레칭 (무오일) (90분)",
+        "description": "오일 없이 스트레칭 위주의 전신 마사지. 압력: 중간 - 강.",
+        "duration": "90분"
+      },
+      "name10": {
+        "title": "타이 스트레칭 (무오일) (75분)",
+        "description": "오일 없이 스트레칭 위주의 전신 마사지. 압력: 중간 - 강.",
+        "duration": "75분"
+      },
+      "name1": {
+        "title": "두피 마사지",
+        "description": "따뜻한 소금 베개를 이용해 목과 머리의 긴장을 완전히 풀어줍니다.",
+        "duration": "30분"
+      },
+      "name9": {
+        "title": "타이 스트레칭 (무오일) (60분)",
+        "description": "오일 없이 스트레칭 위주의 전신 마사지. 압력: 중간 - 강.",
+        "duration": "60분"
+      },
+      "name8": {
+        "title": "베트남 전통 마사지 (90분)",
+        "description": "현지 마사지 기법과 오일 마사지, 스트레칭을 결합한 코스. 압력: 약 - 중간.",
+        "duration": "90분"
+      },
+      "name7": {
+        "title": "베트남 전통 마사지 (75분)",
+        "description": "현지 마사지 기법과 오일 마사지, 스트레칭을 결합한 코스. 압력: 약 - 중간.",
+        "duration": "75분"
+      },
+      "name6": {
+        "title": "베트남 전통 마사지 (60분)",
+        "description": "현지 마사지 기법과 오일 마사지, 스트레칭을 결합한 코스. 압력: 약 - 중간.",
+        "duration": "60분"
+      },
+      "name5": {
+        "title": "아로마 마사지 (90분)",
+        "description": "에센셜 오일을 사용한 전신 마사지. 압력: 약 - 중간.",
+        "duration": "90분"
+      },
+      "name4": {
+        "title": "아로마 마사지 (75분)",
+        "description": "에센셜 오일을 사용한 전신 마사지. 압력: 약 - 중간.",
+        "duration": "75분"
+      },
+      "name3": {
+        "title": "아로마 마사지 (60분)",
+        "description": "에센셜 오일을 사용한 전신 마사지. 압력: 약 - 중간.",
+        "duration": "60분"
+      },
+      "name2": {
+        "title": "등 & 어깨 마사지",
+        "description": "등과 어깨의 뭉친 근육을 풀고 혈액순환을 개선합니다.",
+        "duration": "45분"
+      }
+    },
+    "2": {
+      "name22": {
+        "title": "핫 스톤 풋 마사지",
+        "description": "풋 배스와 따뜻한 돌을 이용한 발 마사지가 포함됩니다.",
+        "duration": "90분"
+      },
+      "name21": {
+        "title": "풋 트리트먼트",
+        "description": "풋 배스, 풋 스크럽, 에센셜 오일 발 마사지 및 풋 마스크 포함.",
+        "duration": "90분"
+      },
+      "name20": {
+        "title": "풋 마사지",
+        "description": "발의 피로를 완화하고 혈액순환을 개선해줍니다.",
+        "duration": "60분"
+      }
+    },
+    "3": {
+      "name25": {
+        "title": "기본 페이셜 케어",
+        "description": "클렌징, 각질 제거, 얼굴 마사지, 마스크, 로션 마무리 포함.",
+        "duration": "60분"
+      },
+      "name24": {
+        "title": "아이 마사지",
+        "description": "눈의 피로를 풀어주고 상쾌한 느낌을 줍니다.",
+        "duration": "30분"
+      },
+      "name23": {
+        "title": "미니 페이셜",
+        "description": "피로 회복과 얼굴 관리가 빠르게 이루어지는 코스입니다.",
+        "duration": "30분"
+      }
+    },
+    "4": {
+      "name26": {
+        "title": "센 시그니처 패키지",
+        "description": "바디 스크럽 30분, 전통 사우나 30분, 아로마 마사지 90분.",
+        "duration": "150분"
+      },
+      "name27": {
+        "title": "젠틀맨 케어",
+        "description": "핫스톤 마사지 90분, 페이셜 마사지 30분, 풋 트리트먼트 30분.",
+        "duration": "150분"
+      },
+      "name28": {
+        "title": "스킨 리프레시",
+        "description": "전신 마사지 60분, 바디 스크럽 30분, 바디 랩 30분, 바디 랩 중 미니 페이셜 30분.",
+        "duration": "120분"
+      },
+      "name29": {
+        "title": "릴랙싱 패키지",
+        "description": "전통 사우나 30분, 아로마 마사지 90분, 기본 페이셜 60분.",
+        "duration": "180분"
+      },
+      "name30": {
+        "title": "센 럭셔리 패키지",
+        "description": "전통 사우나 30분, 센 시그니처 4in1 120분, 기본 페이셜 60분.",
+        "duration": "210분"
+      }
+    },
+    "5": {
+      "name33": {
+        "title": "바디 90' + 바디 스크럽 30'",
+        "description": "선택한 바디 마사지 90분과 바디 스크럽 30분.",
+        "duration": "120분"
+      },
+      "name31": {
+        "title": "등 30' + 얼굴 30'",
+        "description": "등 마사지 30분과 미니 페이셜.",
+        "duration": "60분"
+      },
+      "name32": {
+        "title": "바디 90' + 풋 30'",
+        "description": "선택한 바디 마사지 90분과 풋 마사지 30분.",
+        "duration": "120분"
+      }
+    }
+  },
+  "products": {
+    "1": {
+      "title": "아로마 마사지 (90분)",
+      "duration": "90분",
+      "description": "에센셜 오일을 사용한 전신 마사지입니다. 압력: 약함 - 중간."
+    },
+    "2": {
+      "title": "베트남 전통 바디 마사지 (90분)",
+      "duration": "90분",
+      "description": "베트남 전통 마사지 기법과 오일 마사지, 스트레칭을 결합한 코스입니다. 압력: 약함 - 중간."
+    },
+    "3": {
+      "title": "딥티슈 마사지 (90분)",
+      "duration": "90분",
+      "description": "오일과 팔꿈치를 이용한 전신 마사지입니다. 압력: 중간 - 강함 - 매우 강함."
+    },
+    "4": {
+      "title": "바디 90' + 풋 30'",
+      "duration": "120분",
+      "description": "선택한 90분 바디 마사지와 30분 풋 마사지를 결합한 코스입니다."
+    },
+    "5": {
+      "title": "핫스톤 마사지 (90분)",
+      "duration": "90분",
+      "description": "따뜻한 돌과 오일을 사용한 전신 마사지입니다. 압력: 약함 - 중간."
+    },
+    "6": {
+      "title": "풋 마사지",
+      "duration": "60분",
+      "description": "발의 피로를 풀고 혈액순환을 돕는 마사지입니다."
+    },
+    "7": {
+      "title": "센 시그니처 마사지 4in1 (120분)",
+      "duration": "120분",
+      "description": "핫스톤, 타이, 아로마, 딥티슈를 결합한 스페셜 코스입니다."
+    },
+    "8": {
+      "title": "기초 페이셜 케어",
+      "duration": "60분",
+      "description": "클렌징, 각질 제거, 얼굴 마사지, 마스크, 로션 바르기가 포함됩니다."
+    },
+    "9": {
+      "title": "풋 트리트먼트",
+      "duration": "90분",
+      "description": "풋 배스, 풋 스크럽, 에센셜 오일 마사지, 풋 마스크가 포함됩니다."
+    },
+    "10": {
+      "title": "타이 스트레칭 (NO OIL) (90분)",
+      "duration": "90분",
+      "description": "오일 없이 스트레칭과 굽힘 기술을 사용한 마사지입니다. 압력: 중간 - 강함."
+    }
+  },
+  "gallery": {
+    "title": "갤러리",
+    "description": "SEN SPA 다낭의 갤러리를 탐험: 내부, 사적 커플 방, 트리트먼트 하이라이트. 우리가 다낭에서 최고의 스파 중 하나로 평가받는 이유를 확인하세요."
+  },
+  "customerMoment": {
+    "title": "고객의 행복한 순간"
+  },
+  "treatments": {
+    "33": {
+      "title": "바디 90' + 바디 스크럽 30'",
+      "description": "선택한 바디 마사지 90분과 바디 스크럽 30분."
+    },
+    "25": {
+      "title": "기본 페이셜 케어",
+      "description": "클렌징, 각질 제거, 얼굴 마사지, 마스크, 로션 마무리 포함."
+    },
+    "26": {
+      "title": "센 시그니처",
+      "description": "바디 스크럽 30분, 전통 사우나 30분, 아로마 마사지 90분."
+    },
+    "27": {
+      "title": "젠틀맨 케어",
+      "description": "핫스톤 마사지 90분, 페이셜 마사지 30분, 풋 트리트먼트 30분."
+    },
+    "28": {
+      "title": "스킨 리프레시",
+      "description": "전신 마사지 60분, 바디 스크럽 30분, 바디 랩 30분, 바디 랩 중 미니 페이셜 30분."
+    },
+    "29": {
+      "title": "릴랙싱 패키지",
+      "description": "전통 사우나 30분, 아로마 마사지 90분, 기본 페이셜 60분."
+    },
+    "30": {
+      "title": "센 럭셔리 패키지",
+      "description": "전통 사우나 30분, 센 시그니처 4in1 120분, 기본 페이셜 60분."
+    },
+    "31": {
+      "title": "등 30' + 얼굴 30'",
+      "description": "등 마사지 30분과 미니 페이셜."
+    },
+    "32": {
+      "title": "바디 90' + 풋 30'",
+      "description": "선택한 바디 마사지 90분과 풋 마사지 30분."
+    },
+    "17": {
+      "title": "센 시그니처 마사지 4in1 (90분)",
+      "description": "핫스톤, 타이, 아로마, 딥티슈를 결합한 스페셜 코스입니다."
+    },
+    "18": {
+      "title": "바디 스크럽",
+      "description": "소금, 커피, 녹차 중에서 선택 가능합니다."
+    },
+    "19": {
+      "title": "바디 스크럽 (30분)",
+      "description": "소금, 커피, 녹차 중에서 선택 가능합니다."
+    },
+    "20": {
+      "title": "딥티슈 마사지 (90분)",
+      "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강."
+    },
+    "21": {
+      "title": "딥티슈 마사지 (75분)",
+      "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강."
+    },
+    "22": {
+      "title": "딥티슈 마사지 (60분)",
+      "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강."
+    },
+    "23": {
+      "title": "핫스톤 마사지 (90분)",
+      "description": "따뜻한 돌과 오일을 이용한 전신 마사지. 압력: 약 - 중간."
+    },
+    "24": {
+      "title": "핫스톤 마사지 (75분)",
+      "description": "따뜻한 돌과 오일을 이용한 전신 마사지. 압력: 약 - 중간."
+    },
+    "16": {
+      "title": "딥티슈 마사지 (90분)",
+      "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강."
+    },
+    "15": {
+      "title": "딥티슈 마사지 (75분)",
+      "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강."
+    },
+    "14": {
+      "title": "딥티슈 마사지 (60분)",
+      "description": "오일과 팔꿈치를 이용한 전신 마사지. 압력: 중간 - 강 - 매우 강."
+    },
+    "13": {
+      "title": "핫스톤 마사지 (90분)",
+      "description": "따뜻한 돌과 오일을 이용한 전신 마사지. 압력: 약 - 중간."
+    },
+    "12": {
+      "title": "핫스톤 마사지 (75분)",
+      "description": "따뜻한 돌과 오일을 이용한 전신 마사지. 압력: 약 - 중간."
+    },
+    "11": {
+      "title": "타이 스트레칭 (무오일) (90분)",
+      "description": "오일 없이 스트레칭 위주의 전신 마사지. 압력: 중간 - 강."
+    },
+    "10": {
+      "title": "타이 스트레칭 (무오일) (75분)",
+      "description": "오일 없이 스트레칭 위주의 전신 마사지. 압력: 중간 - 강."
+    },
+    "9": {
+      "title": "타이 스트레칭 (무오일) (60분)",
+      "description": "오일 없이 스트레칭 위주의 전신 마사지. 압력: 중간 - 강."
+    },
+    "8": {
+      "title": "베트남 전통 바디 마사지 (90분)",
+      "description": "베트남 전통 마사지 기법과 오일 마사지, 스트레칭을 결합한 코스입니다. 압력: 약함 - 중간."
+    },
+    "7": {
+      "title": "베트남 전통 바디 마사지 (75분)",
+      "description": "베트남 전통 마사지 기법과 오일 마사지, 스트레칭을 결합한 코스입니다. 압력: 약함 - 중간."
+    },
+    "6": {
+      "title": "베트남 전통 바디 마사지 (60분)",
+      "description": "베트남 전통 마사지 기법과 오일 마사지, 스트레칭을 결합한 코스입니다. 압력: 약함 - 중간."
+    },
+    "5": {
+      "title": "아로마 마사지 (90분)",
+      "description": "에센셜 오일을 사용한 전신 마사지입니다. 압력: 약함 - 중간."
+    },
+    "4": {
+      "title": "아로마 마사지 (75분)",
+      "description": "에센셜 오일을 사용한 전신 마사지입니다. 압력: 약함 - 중간."
+    },
+    "3": {
+      "title": "아로마 마사지 (60분)",
+      "description": "에센셜 오일을 사용한 전신 마사지입니다. 압력: 약함 - 중간."
+    },
+    "2": {
+      "title": "등 & 어깨 마사지",
+      "description": "등과 어깨의 뭉친 근육을 풀고 혈액순환을 개선합니다."
+    },
+    "1": {
+      "title": "두피 마사지",
+      "description": "따뜻한 소금 베개를 이용해 목과 머리의 긴장을 완전히 풀어줍니다."
+    }
+  },
+  "cardInfor": {
+    "title": "연락처 정보",
+    "fullName": "성명",
+    "cardNumber": "카드 번호",
+    "emailAddress": "이메일 주소",
+    "content": "내용",
+    "send": "보내기",
+    "phone": "전화번호",
+    "countryOrRegion": "국가 또는 지역",
+    "media": "미디어",
+    "email": "이메일",
+    "additionalRequest": "추가 요청",
+    "cancellationPolicy": "취소 정책",
+    "error": {
+      "erFullNameRequi": "성명을 모두 입력하세요",
+      "erFullNameRequiL2C": "전체 이름은 최소 2자 이상이어야 합니다.",
+      "erPhoneNumberRequi": "전화번호를 입력하세요.",
+      "erPhoneNumberRequiValid": "유효한 전화번호(8~15자리)를 입력하세요.",
+      "erEmailRequi": "이메일 주소를 입력하세요.",
+      "erEmailRequiValid": "유효한 이메일 주소를 입력하세요.",
+      "erSocial": "소셜 ID는 3자 이상이어야 합니다."
+    }
+  },
+  "confirm": "확인!",
+  "placeholder": {
+    "title": "도움이 필요하시거나 추가 요청 사항이 있으시면 언제든지 알려주세요. 고객님의 편의를 위해 최선을 다하고 스파 경험을 맞춤 설정해 드리겠습니다."
+  },
+  "policy": {
+    "title": "예약 취소 정책",
+    "line1": "예약 시간 최소 24시간 전에 취소 또는 변경해 주세요.",
+    "line2": "예약 후 저희는 서비스 가능 여부를 확인하는 이메일을 보내드리며, 만석일 경우 가장 가까운 가능 시간을 안내드립니다.",
+    "line3": "변경이나 긴급 예약이 필요하신 경우 핫라인 +84 976 591 515 또는 이메일 senspa.dn@gmail.com 으로 연락해 주세요.",
+    "line4": "시술 시간 10분 전에는 스파에 도착하셔서 휴식을 취하시길 권장드립니다."
+  },
+  "done": "완료",
+  "prices": {
+    "totalPrice": "총 가격",
+    "discount": "10% 할인",
+    "totalAfter": "할인 후 총액"
+  }
+}

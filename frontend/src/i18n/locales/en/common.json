@@ -1,0 +1,613 @@
+{
+  "nav": {
+    "home": "Home",
+    "menuPrices": "Menu & Prices",
+    "featuredProducts": "Featured Products",
+    "about": "About Us",
+    "aboutSpa": "About SEN SPA Da Nang",
+    "happyGuests": "Our happy guests",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "bookOnline": "Book Online",
+    "services": "Services"
+  },
+  "banner": {
+    "hot": "HOT⚡",
+    "discount": "Get 10% off instantly when you book online!"
+  },
+  "location": {
+    "findUsOnGoogleMaps": "Find us on Google Maps"
+  },
+  "steps": {
+    "reserve": "Reserve",
+    "select": "Select",
+    "confirm": "Confirm!"
+  },
+  "welcome": "Welcome to our website",
+  "datePicker": {
+    "selectDate": "Select date"
+  },
+  "booking": {
+    "title": "Spa booking",
+    "spaName": "SEN SPA Da Nang",
+    "location": "Location",
+    "date": "Date",
+    "time": "Time",
+    "guest": "Guest",
+    "selectTime": "Select Time",
+    "selectGuests": "Select Guests",
+    "selectATime": "Select a time",
+    "selectGuestsPlaceholder": "Select guests",
+    "bookNow": "BOOK NOW!",
+    "availabilityForToday": "Availability for Today",
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening",
+    "numberOfGuests": "Number of Guests",
+    "fillAllFields": "Please fill in all fields",
+    "appointmentSummary": "Appointment Summary",
+    "selectTreatmentForGuest": "Select treatment for Guest",
+    "selectTreatment": "Select Treatment",
+    "applyThisSameTreatmentForAllGuests": "Apply this same treatment for all guests"
+  },
+  "footer": {
+    "ourLocations": "OUR LOCATIONS",
+    "openDaily": "Open daily from 10:00AM - 09:00PM",
+    "followUs": "FOLLOW US",
+    "spaName": "SEN SPA DA NANG",
+    "paymentMethods": "PAYMENT METHODS",
+    "copyright": "Copyright {{year}} © SEN SPA Da Nang. All Rights Reserved.",
+    "quickLinks": {
+      "aboutUs": "About Us",
+      "featuredProducts": "Featured Products",
+      "bookOnline": "Book Online",
+      "spaMenu": "Spa Menu",
+      "contactUs": "Contact Us"
+    }
+  },
+  "thankYou": {
+    "title": "Thank you for booking service at SEN SPA Da Nang!",
+    "subtitle": "We have received your reservation.",
+    "emailNote": "Please make sure your email address is CORRECT, otherwise, we have no mean of communicating with you. We will send you a confirmation email shortly. In case you need to change time or treatment you can always",
+    "contactUs": "contact us",
+    "backToHome": "BACK TO HOME PAGE"
+  },
+  "reservation": {
+    "title": "Reservation",
+    "contactUsByPhone": "Contact Us by Phone/Wechat/ Kakao Talk / WhatsApp",
+    "spaAddress": "SEN SPA Da Nang: 21 Thai Phien Street, Phuoc Ninh Ward, Hai Chau District, Da Nang",
+    "welcomeMessage": "We are happy to welcome you to SEN SPA Da Nang! You can make a reservation at our spa by one of the following ways:",
+    "waysToBook": {
+      "callPhone": "Calling our phone number",
+      "sendMessage": "Sending us message on Whatsapp, Kakao, Wechat, Zalo",
+      "bookOnline": "Book online on our website and receive instant confirmation"
+    },
+    "maxGuests": "You can book for a maximum of 10 guests at one time on our online booking platform. Simply choose:",
+    "confirmationMessage": "Our staff will send you a confirmation email or message as soon as we receive your booking.",
+    "bookingSteps": {
+      "location": "Spa location you want to book",
+      "guests": "Number of guests",
+      "dateTime": "Date and time",
+      "services": "Services and duration"
+    },
+    "aboutReservation": {
+      "title": "About reservation",
+      "description": "If you have any pre-existing health conditions such as lower back pain, skin conditions, injuries, pregnancy, etc., please inform us in advance so we can tailor the best service for you."
+    },
+    "aboutChange": {
+      "title": "About change / cancellation of reservation",
+      "description": "Please make changes or cancel at least 24 hours prior to the appointment. This allows us to have enough time to properly receive other guests' booking."
+    },
+    "aboutPayment": {
+      "title": "About payment",
+      "description": "Payment can be made in cash or with credit cards. Payment is made after the treatment. Tips are not required but always welcomed."
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "contactUsByEmail": "Contact us by email",
+    "welcomeMessage": "Let us pamper you with our unique treatments. We look forward to seeing you at SEN SPA Da Nang.",
+    "form": {
+      "fullName": "Full name",
+      "emailAddress": "Email address",
+      "title": "Title",
+      "content": "Content",
+      "send": "Send"
+    },
+    "contactUsByPhone": "Contact us by phone",
+    "scanQRCode": "Scan this code to start a WhatsApp or Kakao Talk chat with us",
+    "messages": {
+      "success": "Message sent successfully!",
+      "error": "Failed to send message. Please try again."
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "welcomeTitle": "Welcome to SEN SPA Da Nang",
+    "paragraph1": "With more than 10 years of experience in tourism and 6 years working directly in the spa field, the founder of SEN SPA Da Nang has had the chance to listen, understand, and truly connect with what people need after long journeys: a place to rest, recharge, and find balance.",
+    "paragraph2": "Out of a deep love for Da Nang, a peaceful and welcoming seaside city, and the desire to create a refined wellness destination here, SEN SPA Da Nang was founded in 2023.",
+    "paragraph3": "SEN SPA is more than just a spa. It is an experience where you are cared for by professional therapists, where you can slow down, breathe, and enjoy a calm space that helps restore both body and soul.",
+    "paragraph4": "We believe every moment of relaxation at Sen Spa is part of a beautiful story we want to share with you: a story of peace, of small but complete joys, right in the middle of modern life.",
+    "address": "21 Thai Phien Street, Phuoc Ninh Ward, Hai Chau District, Da Nang",
+    "openDaily": "Open daily: 10:00 AM - 09:00 PM",
+    "phoneEnquiry": "Phone or WhatsApp/Kakao enquiry:",
+    "phoneNumber": "+84 976 591 515",
+    "bookNow": "Book Now"
+  },
+  "home": {
+    "heroBanner": "A RELAXING ESCAPE FOR ALL YOUR SENSES",
+    "subtitle": "A relaxing escape for all your senses, in the heart of Da Nang.",
+    "about": {
+      "founded": "Founded in 2023 with the aim to provide a relaxing spa experience for both travelers and local residents.",
+      "location": "Located in the heart of the city, we take pride in our team of professional, highly skilled therapists.",
+      "services": "SEN SPA Da Nang offers a wide range of foot and body therapies, facial care, as well as spa packages.",
+      "viewLess": "VIEW LESS",
+      "viewAll": "VIEW ALL"
+    },
+    "featuredProducts": {
+      "title": "FEATURED PRODUCTS",
+      "description": "Discover our exclusive spa packages and special offers",
+      "viewSpaMenu": "View Spa Menu",
+      "duration": "Duration:",
+      "price": "Price:"
+    },
+    "testimonials": {
+      "title": "What Guests are saying...",
+      "description": "We hope you enjoy reading our guests reviews as much as ours."
+    },
+    "happyGuests": {
+      "title": "Our Happy Guests",
+      "description": "We cherish each and every moment of welcoming you to our spa. Spread the joy!",
+      "seeMoreReview": "See More Review"
+    },
+    "whyChooseUs": {
+      "title": "Why Choose SEN SPA Da Nang?",
+      "description": "Visit SEN SPA Da Nang and take a heavenly break from your daily routine",
+      "features": {
+        "couples": {
+          "title": "Perfect for couples, groups, and solo travelers",
+          "description": "Whether you're traveling alone, or on a honeymoon, or even with young kids, we always have something to offer."
+        },
+        "location": {
+          "title": "Convenient and central location",
+          "description": "All our spas are just a short walk from iconic landmarks of Da Nang such as Dragon Bridge, Han River, and Con Market."
+        },
+        "therapists": {
+          "title": "Skilled therapists and attentive receptionists",
+          "description": "Be warmly welcomed and expertly cared for by friendly staff from start to finish."
+        }
+      }
+    },
+    "bookYourSpaExperience": "Book Your Spa Experience"
+  },
+  "menu": {
+    "title": "Spa Menu & Prices",
+    "tabs": {
+      "bodyMassage": "Body Massage",
+      "footMassage": "Foot Massage",
+      "facialTreatment": "Facial Treatment",
+      "package": "Package",
+      "combo": "Combo"
+    },
+    "noteLabel": "Note:",
+    "note": "You can choose multiple treatments in one visit. For groups of 3 or more people, please",
+    "contactUs": "contact us",
+    "noteEnd": "We look forward to serving you!",
+    "description": "Discover our relaxing spa treatments and wellness",
+    "monthlyFeaturedProducts": "monthly featured products",
+    "descriptionEnd": "Call hotline +84 976 591 515 for consultation and appointment booking.",
+    "downloadPdfMenu": "Download PDF Menu"
+  },
+  "services": {
+    "1": {
+      "name17": {
+        "title": "Sen Signature Massage 4in1",
+        "description": "Massage combination of hot stones, Thai, aroma and deep tissue.",
+        "duration": "90 minutes"
+      },
+      "name19": {
+        "title": "Body Scrub",
+        "description": "Choices of salt, coffee, green tea.",
+        "duration": "30 minutes"
+      },
+      "name18": {
+        "title": "Sen Signature Massage 4in1 (120 min)",
+        "description": "Massage combination of hot stones, Thai, aroma and deep tissue.",
+        "duration": "120 minutes"
+      },
+      "name16": {
+        "title": "Deep Tissue Massage (90 min)",
+        "description": "Body massage with oil and massage with elbow. Pressure: Medium - Strong - Very strong.",
+        "duration": "90 minutes"
+      },
+      "name15": {
+        "title": "Deep Tissue Massage (75 min)",
+        "description": "Body massage with oil and massage with elbow. Pressure: Medium - Strong - Very strong.",
+        "duration": "75 minutes"
+      },
+      "name14": {
+        "title": "Deep Tissue Massage",
+        "description": "Body massage with oil and massage with elbow. Pressure: Medium - Strong - Very strong.",
+        "duration": "60 minutes"
+      },
+      "name13": {
+        "title": "Hot Stone Massage (90 min)",
+        "description": "Body massage with oil and warm stones. Pressure: light - medium.",
+        "duration": "90 minutes"
+      },
+      "name12": {
+        "title": "Hot Stone Massage",
+        "description": "Body massage with oil and warm stones. Pressure: light - medium.",
+        "duration": "75 minutes"
+      },
+      "name11": {
+        "title": "Thai Stretch (NO OIL) (90 min)",
+        "description": "Body massage with no oil and with bending/stretching techniques. Pressure: Medium - Strong.",
+        "duration": "90 minutes"
+      },
+      "name10": {
+        "title": "Thai Stretch (NO OIL) (75 min)",
+        "description": "Body massage with no oil and with bending/stretching techniques. Pressure: Medium - Strong.",
+        "duration": "75 minutes"
+      },
+      "name1": {
+        "title": "Head Massage",
+        "description": "Using a warm salt pillow as base, this treatment will relax your neck and head area completely.",
+        "duration": "30 minutes"
+      },
+      "name9": {
+        "title": "Thai Stretch (NO OIL)",
+        "description": "Body massage with no oil and with bending/stretching techniques. Pressure: Medium - Strong.",
+        "duration": "60 minutes"
+      },
+      "name8": {
+        "title": "Vietnam Body Massage (90 min)",
+        "description": "A combination of local massage technique with massage oil and body stretch and pull. Pressure: Light - medium.",
+        "duration": "90 minutes"
+      },
+      "name7": {
+        "title": "Vietnam Body Massage (75 min)",
+        "description": "A combination of local massage technique with massage oil and body stretch and pull. Pressure: Light - medium.",
+        "duration": "75 minutes"
+      },
+      "name6": {
+        "title": "Vietnam Body Massage",
+        "description": "A combination of local massage technique with massage oil and body stretch and pull. Pressure: Light - medium.",
+        "duration": "60 minutes"
+      },
+      "name5": {
+        "title": "Aroma Massage (90 min)",
+        "description": "Body massage with essential oil. Pressure: Light - medium.",
+        "duration": "90 minutes"
+      },
+      "name4": {
+        "title": "Aroma Massage (75 min)",
+        "description": "Body massage with essential oil. Pressure: Light - medium.",
+        "duration": "75 minutes"
+      },
+      "name3": {
+        "title": "Aroma Massage",
+        "description": "Body massage with essential oil. Pressure: Light - medium.",
+        "duration": "60 minutes"
+      },
+      "name2": {
+        "title": "Back and Shoulder Massage",
+        "description": "Reduce stiffness and improve circulation in back & shoulder area.",
+        "duration": "45 minutes"
+      }
+    },
+    "2": {
+      "name22": {
+        "title": "Foot Massage With Warm-Stones",
+        "description": "Includes: Foot bath and foot massage with warm stones.",
+        "duration": "90 minutes"
+      },
+      "name21": {
+        "title": "Foot Treatment",
+        "description": "Includes: Foot bath, foot scrub, foot massage with essential oil and foot mask.",
+        "duration": "90 minutes"
+      },
+      "name20": {
+        "title": "Foot Massage",
+        "description": "Foot massage will help relieve all stress from your feet and improve blood circulation.",
+        "duration": "60 minutes"
+      }
+    },
+    "3": {
+      "name25": {
+        "title": "Basic Facial Care",
+        "description": "Includes: cleansing, exfoliation, massage, facial mask, lotion application.",
+        "duration": "60 minutes"
+      },
+      "name24": {
+        "title": "Eyes Massage",
+        "description": "Relieve your eyes from tiredness and give you a refreshing look.",
+        "duration": "30 minutes"
+      },
+      "name23": {
+        "title": "Mini Facial",
+        "description": "A quick relieving massage and treatment for your face.",
+        "duration": "30 minutes"
+      }
+    },
+    "4": {
+      "name26": {
+        "title": "Sen Signature",
+        "description": "Body scrub 30 min, Traditional sauna 30 min, Aroma massage 90 min.",
+        "duration": "150 minutes"
+      },
+      "name27": {
+        "title": "Gentlemen Care",
+        "description": "Hot stones massage 90 min, facial massage 30 min and foot treatment 30 min.",
+        "duration": "150 minutes"
+      },
+      "name28": {
+        "title": "Skin Refresh",
+        "description": "Body massage 60 min, Body scrub 30 min, Body wrap 30 min, mini facial (while doing body wrap) 30 min.",
+        "duration": "120 minutes"
+      },
+      "name29": {
+        "title": "Relaxing Package",
+        "description": "Traditional sauna 30 min, Aroma massage 90 min, Basic facial 60 min.",
+        "duration": "180 minutes"
+      },
+      "name30": {
+        "title": "Sen Luxury Package",
+        "description": "Traditional sauna 30 min, Sen signature 4 in 1 120 min, Basic facial 60 min.",
+        "duration": "210 minutes"
+      }
+    },
+    "5": {
+      "name33": {
+        "title": "Body 90' + Body Scrub 30'",
+        "description": "Body massage 90 min of your choice and body scrub 30 min.",
+        "duration": "120 minutes"
+      },
+      "name31": {
+        "title": "Back 30' + Face 30'",
+        "description": "Back massage 30 min and mini-facial.",
+        "duration": "60 minutes"
+      },
+      "name32": {
+        "title": "Body 90' + Foot 30'",
+        "description": "Body massage 90 min of your choice and foot massage 30 min.",
+        "duration": "120 minutes"
+      }
+    }
+  },
+  "products": {
+    "1": {
+      "title": "Aroma Massage (90 min)",
+      "duration": "90 minutes",
+      "description": "Body massage with essential oil. Pressure: Light - medium."
+    },
+    "2": {
+      "title": "Vietnam Body Massage (90 min)",
+      "duration": "90 minutes",
+      "description": "A combination of local massage technique with massage oil and body stretch and pull. Pressure: Light - medium."
+    },
+    "3": {
+      "title": "Deep Tissue Massage (90 min)",
+      "duration": "90 minutes",
+      "description": "Body massage with oil and massage with elbow. Pressure: Medium - Strong - Very strong."
+    },
+    "4": {
+      "title": "Body 90' + Foot 30'",
+      "duration": "120 minutes",
+      "description": "Body massage 90 min of your choice and foot massage 30 min."
+    },
+    "5": {
+      "title": "Hot Stone Massage (90 min)",
+      "duration": "90 minutes",
+      "description": "Body massage with oil and warm stones. Pressure: light - medium."
+    },
+    "6": {
+      "title": "Foot Massage",
+      "duration": "60 minutes",
+      "description": "Foot massage will help relieve all stress from your feet and improve blood circulation."
+    },
+    "7": {
+      "title": "Sen Signature Massage 4in1 (120 min)",
+      "duration": "120 minutes",
+      "description": "Massage combination of hot stones, Thai, aroma and deep tissue."
+    },
+    "8": {
+      "title": "Basic Facial Care",
+      "duration": "60 minutes",
+      "description": "Includes: cleansing, exfoliation, massage, facial mask, lotion application."
+    },
+    "9": {
+      "title": "Foot Treatment",
+      "duration": "90 minutes",
+      "description": "Includes: Foot bath, foot scrub, foot massage with essential oil and foot mask."
+    },
+    "10": {
+      "title": "Thai Stretch (NO OIL) (90 min)",
+      "duration": "90 minutes",
+      "description": "Body massage with no oil and with bending/stretching techniques. Pressure: Medium - Strong."
+    }
+  },
+  "gallery": {
+    "title": "Gallery",
+    "description": "Explore SEN SPA Da Nang's gallery: interior, private couple rooms, and treatment highlights. See why we are rated among the best spas in Da Nang."
+  },
+  "customerMoment": {
+    "title": "Our Customers' Happy Moments"
+  },
+  "treatments": {
+    "33": {
+      "title": "Body 90' + Body Scrub 30'",
+      "description": "Body massage 90 min of your choice and body scrub 30 min."
+    },
+    "25": {
+      "title": "Basic Facial Care",
+      "description": "Includes: cleansing, exfoliation, massage, facial mask, lotion application."
+    },
+    "26": {
+      "title": "Sen Signature",
+      "description": "Body scrub 30 min, Traditional sauna 30 min, Aroma massage 90 min."
+    },
+    "27": {
+      "title": "Gentlemen Care",
+      "description": "Hot stones massage 90 min, facial massage 30 min and foot treatment 30 min."
+    },
+    "28": {
+      "title": "Skin Refresh",
+      "description": "Body massage 60 min, Body scrub 30 min, Body wrap 30 min, mini facial (while doing body wrap) 30 min."
+    },
+    "29": {
+      "title": "Relaxing Package",
+      "description": "Traditional sauna 30 min, Aroma massage 90 min, Basic facial 60 min."
+    },
+    "30": {
+      "title": "Sen Luxury Package",
+      "description": "Traditional sauna 30 min, Sen signature 4 in 1 120 min, Basic facial 60 min."
+    },
+    "31": {
+      "title": "Back 30' + Face 30'",
+      "description": "Back massage 30 min and mini-facial."
+    },
+    "32": {
+      "title": "Body 90' + Foot 30'",
+      "description": "Body massage 90 min of your choice and foot massage 30 min."
+    },
+    "17": {
+      "title": "Sen Signature Massage 4in1",
+      "description": "Massage combination of hot stones, Thai, aroma and deep tissue."
+    },
+    "24": {
+      "title": "Eyes Massage",
+      "description": "Relieve your eyes from tiredness and give you a refreshing look."
+    },
+    "23": {
+      "title": "Mini Facial",
+      "description": "A quick relieving massage and treatment for your face."
+    },
+    "22": {
+      "title": "Foot Massage With Warm-Stones",
+      "description": "Includes: Foot bath and foot massage with warm stones."
+    },
+    "21": {
+      "title": "Foot Treatment",
+      "description": "Includes: Foot bath, foot scrub, foot massage with essential oil and foot mask."
+    },
+    "20": {
+      "title": "Foot Massage",
+      "description": "Foot massage will help relieve all stress from your feet and improve blood circulation."
+    },
+    "19": {
+      "title": "Body Scrub",
+      "description": "Choices of salt, coffee, green tea."
+    },
+    "18": {
+      "title": "Sen Signature Massage 4in1 (120 min)",
+      "description": "Massage combination of hot stones, Thai, aroma and deep tissue."
+    },
+    "16": {
+      "title": "Deep Tissue Massage (90 min)",
+      "description": "Body massage with oil and massage with elbow. Pressure: Medium - Strong - Very strong."
+    },
+    "15": {
+      "title": "Deep Tissue Massage (75 min)",
+      "description": "Body massage with oil and massage with elbow. Pressure: Medium - Strong - Very strong."
+    },
+    "14": {
+      "title": "Deep Tissue Massage",
+      "description": "Body massage with oil and massage with elbow. Pressure: Medium - Strong - Very strong."
+    },
+    "13": {
+      "title": "Hot Stone Massage (90 min)",
+      "description": "Body massage with oil and warm stones. Pressure: light - medium."
+    },
+    "12": {
+      "title": "Hot Stone Massage",
+      "description": "Body massage with oil and warm stones. Pressure: light - medium."
+    },
+    "11": {
+      "title": "Thai Stretch (NO OIL) (90 min)",
+      "description": "Body massage with no oil and with bending/stretching techniques. Pressure: Medium - Strong."
+    },
+    "10": {
+      "title": "Thai Stretch (NO OIL) (75 min)",
+      "description": "Body massage with no oil and with bending/stretching techniques. Pressure: Medium - Strong."
+    },
+    "1": {
+      "title": "Head Massage",
+      "description": "Using a warm salt pillow as base, this treatment will relax your neck and head area completely."
+    },
+    "9": {
+      "title": "Thai Stretch (NO OIL)",
+      "description": "Body massage with no oil and with bending/stretching techniques. Pressure: Medium - Strong."
+    },
+    "8": {
+      "title": "Vietnam Body Massage (90 min)",
+      "description": "A combination of local massage technique with massage oil and body stretch and pull. Pressure: Light - medium."
+    },
+    "7": {
+      "title": "Vietnam Body Massage (75 min)",
+      "description": "A combination of local massage technique with massage oil and body stretch and pull. Pressure: Light - medium."
+    },
+    "6": {
+      "title": "Vietnam Body Massage",
+      "description": "A combination of local massage technique with massage oil and body stretch and pull. Pressure: Light - medium."
+    },
+    "5": {
+      "title": "Aroma Massage (90 min)",
+      "description": "Body massage with essential oil. Pressure: Light - medium."
+    },
+    "4": {
+      "title": "Aroma Massage (75 min)",
+      "description": "Body massage with essential oil. Pressure: Light - medium."
+    },
+    "3": {
+      "title": "Aroma Massage",
+      "description": "Body massage with essential oil. Pressure: Light - medium."
+    },
+    "2": {
+      "title": "Back and Shoulder Massage",
+      "description": "Reduce stiffness and improve circulation in back & shoulder area."
+    }
+  },
+  "cardInfor": {
+    "title": "Contact Info",
+    "fullName": "Full Name",
+    "phone": "Phone",
+    "countryOrRegion": "Country or Region",
+    "media": "Media",
+    "email": "Email",
+    "additionalRequest": "Additional Request",
+    "cancellationPolicy": "Cancellation Policy",
+    "cardNumber": "Card Number",
+    "emailAddress": "Email Address",
+    "content": "Content",
+    "send": "Send",
+    "error": {
+      "erFullNameRequi": "Full name is required",
+      "erFullNameRequiL2C" : "Full name must be at least 2 characters",
+      "erPhoneNumberRequi": "Phone Number is required",
+      "erPhoneNumberRequiValid": "Please enter a valid phone number (8-15 digits)",
+      "erEmailRequi" : "Email is required",
+      "erEmailRequiValid" : "Please enter a valid email address",
+      "erSocial" : "Social ID must be at least 3 characters"
+
+    }
+  },
+  "confirm":  "Confirm !",
+  "placeholder" : {
+    "title": "Feel free to let us know if you need assistance or have an additional request so we can help to accommodate you or personalize your spa experience."
+  },
+  "policy": {
+    "title": "Cancellation Policy",
+    "line1": "Please cancel or reschedule at least 24 hours in advance of your reservation time.",
+    "line2": "Upon booking, we will send you a confirmation email to confirm whether we can arrange the service for you and in case fully booked, we will inform you the closest time available.",
+    "line3": "If you need to make changes or make an urgent booking, please contact our hotline: +84 976 591 515 or email senspa.dn@gmail.com.",
+    "line4": "We suggest you arrive at our spa 10 minutes earlier to relax before the treatment time."
+  },
+  "done": "DONE",
+  "prices": {
+    "totalPrice": "Total price",
+    "discount": "Discount 10%",
+    "totalAfter": "Total after discount"
+  }
+  
+}
