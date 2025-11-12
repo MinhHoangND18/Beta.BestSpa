@@ -27,12 +27,12 @@ const BookingThankYou: React.FC<BookingThankYouProps> = ({
     const { t, i18n } = useTranslation('common');
     const [, setForceUpdate] = useState(0);
 
-    useEffect(() => {
-        // Force re-render when i18n is ready
-        if (i18n.isInitialized) {
-            setForceUpdate(prev => prev + 1);
-        }
-    }, [i18n.isInitialized]);
+    // useEffect(() => {
+    //     // Force re-render when i18n is ready
+    //     if (i18n.isInitialized) {
+    //         setForceUpdate(prev => prev + 1);
+    //     }
+    // }, [i18n.isInitialized]);
 
     const defaultTitle = t('thankYou.title');
     const defaultSubtitle = t('thankYou.subtitle');
@@ -108,18 +108,18 @@ const BookingThankYou: React.FC<BookingThankYouProps> = ({
                                     {/* Icon Circle */}
                                     <Box
                                         sx={{
-                                            width: { xs: 50, sm: 60, md: 75 },
-                                            height: { xs: 50, sm: 60, md: 75 },
+                                            width: { xs: 45, sm: 55, md: 70 },
+                                            height: { xs: 45, sm: 55, md: 70 },
                                             borderRadius: '50%',
                                             bgcolor: '#fff',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            mb: { xs: 0.5, md: 1 },
+                                            mb: { xs: 0, md: 0 },
                                             boxShadow: 2,
                                             zIndex: 3,
                                             position: 'relative',
-                                            mt: { xs: 1.5, md: 2.8 },
+                                            mt: { xs: 1, md: 2},
                                         }}
                                     >
                                         <Box

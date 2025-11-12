@@ -95,15 +95,16 @@ export default function ContactPage() {
             {/* Breadcrumb */}
             <Typography align="center" sx={{ mb: 6, p: 2 }}>
                 <Typography
+                
                     component="a"
                     href="/"
-                    sx={{ color: '#9e2265', textDecoration: 'none', mr: 1 }}
+                    sx={{ color: '#9e2265', textDecoration: 'none', mr: 1, fontFamily: "'Open Sans', sans-serif" }}
                 >
                     {t('nav.home')}
                 </Typography>
 
                 &rsaquo;
-                <span style={{ marginLeft: 8, color: '#000' }}>{t('contact.title')}</span>
+                <span style={{ marginLeft: 8, color: '#000', fontFamily: "'Open Sans', sans-serif" }}>{t('contact.title')}</span>
             </Typography>
 
             <Container maxWidth="lg">
@@ -285,7 +286,7 @@ export default function ContactPage() {
                                     <Button
                                         type="submit"
                                         variant="contained"
-                                        sx={{
+                                        sx={{fontFamily: "'Open Sans', sans-serif",
                                             borderRadius: 0,
                                             backgroundColor: '#9e2265',
                                             '&:hover': { backgroundColor: '#d83b8a' },
@@ -297,7 +298,7 @@ export default function ContactPage() {
                                         }}
                                         disabled={isSubmitting}
                                     >
-                                        {isSubmitting ? <CircularProgress size={24} sx={{ color: 'white' }} /> : t('contact.form.send')}
+                                        {isSubmitting ? <CircularProgress size={24} sx={{ color: 'white'}} /> : t('contact.form.send')}
                                     </Button>
                                 </Box>
                             </Box>
@@ -326,14 +327,14 @@ export default function ContactPage() {
                                 variant="h6"
                                 fontWeight={600}
                                 color="#9e2265"
-                                sx={{ mb: 2.5, textTransform: 'uppercase' }}
+                                sx={{ mb: 2.5, textTransform: 'uppercase', fontFamily: "'Open Sans', sans-serif" }}
                             >
                                 {t('footer.spaName')}
                             </Typography>
 
                             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                                 <Typography sx={{ mr: 1.5, minWidth: '20px' }}>✉️</Typography>
-                                <Typography sx={{ lineHeight: 1.6 }}>
+                                <Typography sx={{ lineHeight: 1.6, fontFamily: "'Open Sans', sans-serif" }}>
                                     <a
                                         href="mailto:senspa.dn@gmail.com"
                                         style={{
@@ -348,7 +349,7 @@ export default function ContactPage() {
 
                             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                                 <Typography sx={{ mr: 1.5, minWidth: '20px' }}>📍</Typography>
-                                <Typography sx={{ lineHeight: 1.6 }}>
+                                <Typography sx={{ lineHeight: 1.6 , fontFamily: "'Open Sans', sans-serif"}}>
                                     <a
                                         href="https://maps.app.goo.gl/xrjA7b8YpQhA3q1b9"
                                         target="_blank"
@@ -365,7 +366,7 @@ export default function ContactPage() {
 
                             <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
                                 <Typography sx={{ mr: 1.5, minWidth: '20px' }}>📞</Typography>
-                                <Typography sx={{ lineHeight: 1.6 }}>
+                                <Typography sx={{ lineHeight: 1.6 , fontFamily: "'Open Sans', sans-serif"}}>
                                     <a
                                         href="tel:+84976591515"
                                         style={{

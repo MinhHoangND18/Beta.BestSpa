@@ -340,6 +340,7 @@ const AboutUs: React.FC = () => {
                             href="/menu"
                             variant="contained"
                             sx={{
+                                fontFamily: "'Open Sans', sans-serif",
                                 borderRadius: 0,
                                 bgcolor: "#9e2265",
                                 color: "white",

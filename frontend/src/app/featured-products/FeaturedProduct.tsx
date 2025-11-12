@@ -220,6 +220,7 @@ export default function FeaturedProducts() {
                                 variant="contained"
                                 onClick={() => handleBookNow(product)}
                                 sx={{
+                                    fontFamily: "'Open Sans', sans-serif", 
                                     borderRadius: 0,
                                     backgroundColor: "#9e2265",
                                     width: "150px",
@@ -228,7 +229,7 @@ export default function FeaturedProducts() {
                                     "&:hover": { backgroundColor: "#d83b8a" },
                                 }}
                             >
-                                BOOK NOW
+                                {t('bookNow')}
                             </Button>
                         </Box>
                     </Card>

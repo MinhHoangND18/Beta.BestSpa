@@ -71,12 +71,12 @@ export default function Reservation() {
                     <Typography
                         component="a"
                         href="/"
-                        sx={{ color: '#9e2265', textDecoration: 'none', mr: 1 }}
+                        sx={{ color: '#9e2265', textDecoration: 'none', mr: 1, fontFamily: "'Open Sans', sans-serif" }}
                     >
                         {t('nav.home')}
                     </Typography>
                     &rsaquo;
-                    <span style={{ marginLeft: 8, color: '#000' }}>{t('reservation.title')}</span>
+                    <span style={{ marginLeft: 8, color: '#000', fontFamily: "'Open Sans', sans-serif" }}>{t('reservation.title')}</span>
                 </Typography>
             </Box>
 
@@ -188,13 +188,14 @@ export default function Reservation() {
                             variant="contained"
                             onClick={() => handleBookNow('Reservation')}
                             sx={{
+                                fontFamily: "'Open Sans', sans-serif", 
                                 borderRadius: 0,
                                 backgroundColor: '#9e2265',
                                 color: '#fff',
                                 px: 8,
                                 py: 2,
                                 fontWeight: 600,
-                                fontSize: '16px',
+                                fontSize: '18px',
                                 textTransform: 'uppercase',
                                 mb: 5,
                                 '&:hover': { backgroundColor: '#d83b8a' },

@@ -64,7 +64,7 @@ const Footer: React.FC = () => {
     { href: "https://wa.me/84976591515", src: "/images/whatsapp-icon.svg", bgcolor: "#25D366" },
     { href: "https://line.me/ti/p/lgR6MK5ug3", src: "/images/line-logo.svg", bgcolor: "#00B900" },
     { href: "https://zalo.me/84976591515", src: "/images/zalo-icon.svg", bgcolor: "#0068FF" },
-    { href: "tel:+84976591515", icon: <Phone />, bgcolor: "#9a2163" },
+    { href: "tel:+84976591515", icon: <Phone />, bgcolor: "#ffffffff" },
   ];
 
   return (

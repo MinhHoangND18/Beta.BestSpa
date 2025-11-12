@@ -531,6 +531,7 @@ export default function HomePage() {
                     {/* Text trên pagination */}
                     <Box
                         sx={{
+                            
                             position: "absolute",
                             bottom: "80px",
                             left: "50%",
@@ -543,6 +544,7 @@ export default function HomePage() {
                     >
                         <Typography
                             sx={{
+                                fontFamily: "'Open Sans', sans-serif",
                                 fontSize: { xs: "1rem", md: "1.5rem" },
                                 fontWeight: 300,
                                 letterSpacing: "0.2em",
@@ -990,6 +992,7 @@ export default function HomePage() {
                         <Typography
                             variant="h6"
                             sx={{
+                                fontFamily: "'Open Sans', sans-serif",
                                 fontWeight: 300,
                                 fontSize: { xs: "1rem", md: "1.5rem" },
                                 letterSpacing: "0.075em",
@@ -1116,9 +1119,9 @@ export default function HomePage() {
                                             >
                                                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                                                     <AccessTimeIcon sx={{ fontSize: 16 }} />
-                                                    <Typography variant="body2">{product.duration}</Typography>
+                                                    <Typography variant="body2" sx = {{fontFamily: "'Open Sans', sans-serif",}}>{product.duration}</Typography>
                                                 </Box>
-                                                <Typography variant="body1" sx={{ fontSize: 14 }} >
+                                                <Typography variant="body1" sx={{ fontSize: 14 , fontFamily: "'Open Sans', sans-serif",}} >
                                                     {product.price}
                                                 </Typography>
                                             </Box>
@@ -1164,7 +1167,7 @@ export default function HomePage() {
                                                 </li>
 
                                                 <li>
-                                                    <Typography variant="body2" color="text.primary">
+                                                    <Typography variant="body2" color="text.primary" sx={{fontFamily: "'Open Sans', sans-serif", fontSize: '14px',}}>
                                                         <strong>{t('home.featuredProducts.price')}</strong> {product.price}
                                                     </Typography>
                                                 </li>
@@ -1174,7 +1177,8 @@ export default function HomePage() {
                                                         variant="body2"
                                                         color="#333333ff"
                                                         sx={{
-                                                            lineHeight: 1.6,
+                                                            fontFamily: "'Open Sans', sans-serif", fontSize: '14px',
+                                                            lineHeight: 1.4,
                                                             display: "-webkit-box",
                                                             WebkitLineClamp: 3,
                                                             WebkitBoxOrient: "vertical",
@@ -1197,6 +1201,7 @@ export default function HomePage() {
                         <Box textAlign="center" sx={{ mt: 4 }}>
                             <Button variant="outlined" size="large" href="/menu"
                                 sx={{
+                                    fontFamily: "'Open Sans', sans-serif", fontSize: '15px',
                                     borderRadius: 0,
                                     height: "56px",
                                     borderColor: "#9e2265",
@@ -1502,6 +1507,7 @@ export default function HomePage() {
                                 href="https://www.google.com/maps/place/SEN+SPA+Da+Nang/@16.0622069,108.1608071,14509m/data=!3m1!1e3!4m8!3m7!1s0x314219ab5d9436d3:0x3a78e723f58964c7!8m2!3d16.0648855!4d108.2230748!9m1!1b1!16s%2Fg%2F11vpd2vhbm?entry=ttu&g_ep=EgoyMDI1MDkwMy4wIKXMDSoASAFQAw%3D%3D"
 
                                 sx={{
+                                    fontFamily: "'Open Sans', sans-serif", fontSize: '15px',
                                     borderRadius: 0,
                                     height: "56px",
                                     borderColor: "#9e2265",

@@ -96,7 +96,7 @@ export default function BookingPage() {
     const steps: Step[] = [
         { icon: "/reserve.svg", label: t('steps.reserve'), active: true },
         { icon: "/select.svg", label: t('steps.select'), active: true },
-        { icon: "/confirm.svg", label: t('steps.confirm'), active: true },
+        { icon: "/confirm.svg", label: t('steps.confirm'), active: false },
     ];
 
     const treatments: Treatment[] = [
@@ -163,6 +163,11 @@ export default function BookingPage() {
         time: "",
         people: "",
     });
+    const [bookingError, setBookingError] = useState<string | null>(null);
+
+    const isBookingInfoComplete = useMemo(() => {
+        return Boolean(bookingData.spa && bookingData.date && bookingData.time && bookingData.people);
+    }, [bookingData]);
 
     useEffect(() => {
         const savedData = localStorage.getItem("bookingData");
@@ -418,6 +423,11 @@ export default function BookingPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!isBookingInfoComplete) {
+            setBookingError(t('booking.completeReservationDetails'));
+            return;
+        }
+        setBookingError(null);
         if (validateForm()) {
             console.log("Form is valid:", formData);
             router.push("/thanks");
@@ -512,18 +522,18 @@ export default function BookingPage() {
                                     {/* Icon Circle */}
                                     <Box
                                         sx={{
-                                            width: { xs: 50, sm: 60, md: 75 },
-                                            height: { xs: 50, sm: 60, md: 75 },
+                                            width: { xs: 45, sm: 55, md: 70 },
+                                            height: { xs: 45, sm: 55, md: 70 },
                                             borderRadius: '50%',
                                             bgcolor: '#fff',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            mb: { xs: 0.5, md: 1 },
+                                            mb: { xs: 0, md: 0 },
                                             boxShadow: 2,
                                             zIndex: 3,
                                             position: 'relative',
-                                            mt: { xs: 1.5, md: 2.8 },
+                                            mt: { xs: 1, md: 2 },
                                         }}
                                     >
                                         <Box
@@ -543,6 +553,7 @@ export default function BookingPage() {
                                         variant="body2"
                                         fontWeight={600}
                                         sx={{
+                                            fontFamily: "'Open Sans', sans-serif",
                                             color: '#fff',
                                             fontSize: { xs: 11, sm: 13, md: 15 },
                                             mt: { xs: 0, md: 0 },
@@ -558,7 +569,7 @@ export default function BookingPage() {
                 </Box>
             </Box>
             <Box sx={{
-                display: { xs: 'block', md: 'flex' }, 
+                display: { xs: 'block', md: 'flex' },
                 justifyContent: 'center',
                 alignItems: 'center',
                 // textAlign: { xs: 'left', md: 'center' },
@@ -586,6 +597,7 @@ export default function BookingPage() {
                             <Typography
                                 variant="h5"
                                 sx={{
+                                    fontFamily: "'Open Sans', sans-serif",
                                     fontWeight: 600,
                                     mb: 1,
                                     color: "#594a39",
@@ -600,6 +612,7 @@ export default function BookingPage() {
                                         float: "right",
                                         transform: showSummary ? "rotate(180deg)" : "rotate(0deg)",
                                         transition: "0.3s",
+                                        bgcolor: showSummary ? 'none' : 'none',
                                     }}
                                 />
                             </Typography>
@@ -607,75 +620,74 @@ export default function BookingPage() {
                             <Collapse in={showSummary}>
                                 <Box
                                     sx={{
+
                                         backgroundColor: "#fff6fa",
                                         borderRadius: 0,
-                                        p: 2.5,
+                                        py: 1,
+                                        px: 2,
                                     }}
                                 >
-                                    <List dense>
-                                        <ListItem>
+                                    <List dense sx={{ px: 0, paddingX: 0, fontFamily: "'Open Sans', sans-serif" }}>
+                                        <ListItem disableGutters >
                                             <ListItemText
-                                                primary={t('booking.date')}
+
+
+                                                primary={<span style={{ fontFamily: "'Open Sans', sans-serif" }}>
+                                                    {t('booking.date')}:
+                                                </span>}
                                                 secondary={formatDate(bookingData.date) || "Not selected"}
                                                 primaryTypographyProps={{
                                                     component: "span",
-                                                    sx: {
-                                                        display: "inline",
-                                                        fontWeight: "bold",
-                                                        mr: 1,
-                                                    },
+                                                    sx: { fontWeight: "bold", display: "inline", mr: 1, fontFamily: "'Open Sans', sans-serif" },
                                                 }}
                                                 secondaryTypographyProps={{
                                                     component: "span",
-                                                    sx: {
-                                                        display: "inline",
-                                                        color: "text.primary",
-                                                    },
+                                                    sx: { display: "inline", fontFamily: "'Open Sans', sans-serif" },
                                                 }}
                                             />
                                         </ListItem>
 
-                                        <ListItem>
+                                        <ListItem disableGutters>
                                             <ListItemText
-                                                primary={t('booking.time')}
+                                                primary= {<span> {t('booking.time')}: </span>}
                                                 secondary={bookingData.time || "Not selected"}
                                                 primaryTypographyProps={{
                                                     component: "span",
-                                                    sx: { fontWeight: "bold", display: "inline", mr: 1 },
+                                                    sx: { fontWeight: "bold", display: "inline", mr: 1, fontFamily: "'Open Sans', sans-serif" },
                                                 }}
                                                 secondaryTypographyProps={{
                                                     component: "span",
-                                                    sx: { display: "inline" },
+                                                    sx: { display: "inline", fontFamily: "'Open Sans', sans-serif" },
                                                 }}
                                             />
                                         </ListItem>
 
-                                        <ListItem>
+                                        <ListItem disableGutters>
                                             <ListItemText
-                                                primary={t('booking.location')}
+                                                primary={ <span> {t('booking.location')}: </span>}
                                                 secondary={bookingData.spa || "Not selected"}
                                                 primaryTypographyProps={{
                                                     component: "span",
-                                                    sx: { fontWeight: "bold", display: "inline", mr: 1 },
+                                                    sx: { fontWeight: "bold", display: "inline", mr: 1, fontFamily: "'Open Sans', sans-serif" },
                                                 }}
                                                 secondaryTypographyProps={{
                                                     component: "span",
-                                                    sx: { display: "inline" },
+                                                    sx: { display: "inline", fontFamily: "'Open Sans', sans-serif" },
                                                 }}
                                             />
                                         </ListItem>
 
-                                        <ListItem>
+                                        <ListItem disableGutters>
                                             <ListItemText
-                                                primary={t('booking.numberOfGuests')}
+                                                primary= { <span> {t('booking.numberOfGuests')} : </span>}
                                                 secondary={bookingData.people || "0"}
                                                 primaryTypographyProps={{
                                                     component: "span",
-                                                    sx: { fontWeight: "bold", display: "inline", mr: 1 },
+                                                    sx: { fontWeight: "bold", display: "inline", mr: 1, fontFamily: "'Open Sans', sans-serif" },
                                                 }}
                                                 secondaryTypographyProps={{
                                                     component: "span",
-                                                    sx: { display: "inline" },
+                                                    sx: { display: "inline", fontFamily: "'Open Sans', sans-serif" },
                                                 }}
                                             />
                                         </ListItem>
@@ -779,7 +791,7 @@ export default function BookingPage() {
                             {/* Guest Services */}
                             {Array.from({ length: numberOfGuests }, (_, index) => (
                                 <Card key={index} sx={{ p: 0 }}>
-                                    <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: '#594a39' }}>
+                                    <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: '#594a39', fontFamily: "'Open Sans', sans-serif", }}>
                                         {t('booking.selectTreatmentForGuest')} {index + 1}
                                     </Typography>
 
@@ -808,6 +820,7 @@ export default function BookingPage() {
                                             cursor: "pointer",
                                             "& .MuiInputLabel-root": {
                                                 color: "#888",
+                                                fontFamily: "'Open Sans', sans-serif",
                                             },
                                             "& .MuiInputLabel-root.Mui-focused": {
                                                 color: "#9e2265",
@@ -842,6 +855,7 @@ export default function BookingPage() {
                                             >
                                                 <Typography variant="h6"
                                                     sx={{
+                                                        fontFamily: "'Open Sans', sans-serif",
                                                         color: '#9e2265',
                                                         fontSize: '20',
                                                         fontWeight: 300,
@@ -873,23 +887,23 @@ export default function BookingPage() {
                                                         alignItems="flex-start"
                                                     >
                                                         <Box sx={{ flex: 1 }}>
-                                                            <Typography variant="h6" sx={{ mb: 1 }}>
+                                                            <Typography variant="h6" sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}>
                                                                 {treatment.name}
                                                             </Typography>
                                                             <Typography
                                                                 variant="body2"
                                                                 color="text.secondary"
-                                                                sx={{ mb: 1 }}
+                                                                sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}
                                                             >
                                                                 {treatment.description}
                                                             </Typography>
                                                             <Stack direction="row" spacing={2}>
-                                                                <Typography variant="body2">
+                                                                <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
                                                                     {treatment.duration} minutes
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="body2"
-                                                                    sx={{ fontWeight: 600 }}
+                                                                    sx={{ fontWeight: 600, fontFamily: "'Open Sans', sans-serif", }}
                                                                 >
                                                                     {treatment.price.toLocaleString()} ₫ ($
                                                                     {treatment.priceUSD})
@@ -948,7 +962,10 @@ export default function BookingPage() {
                                                     }}
                                                 />
                                             }
-                                            label={t('booking.applyThisSameTreatmentForAllGuests')}
+                                            label={<span style={{ fontFamily: "'Open Sans', sans-serif" }}>
+                                                {t('booking.applyThisSameTreatmentForAllGuests')}
+                                            </span>}
+
                                             sx={{ mt: 2 }}
                                         />
                                     )}
@@ -980,7 +997,7 @@ export default function BookingPage() {
                                         },
                                     }
                                 }}>
-                                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#594a39' }}>
+                                <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#594a39', fontFamily: "'Open Sans', sans-serif", }}>
                                     {t('cardInfor.title')}
                                 </Typography>
 
@@ -999,7 +1016,7 @@ export default function BookingPage() {
                                         helperText={errors.fullName}
                                     />
 
-                                    <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                                    <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
                                         <Box sx={{ position: "relative", flex: 1, borderRadius: 0 }}>
                                             <Stack direction="row" spacing={1}>
                                                 <TextField
@@ -1008,13 +1025,23 @@ export default function BookingPage() {
                                                     InputProps={{
                                                         readOnly: true,
                                                         endAdornment: (
-                                                            <InputAdornment position="end">
+                                                            <InputAdornment position="start" >
                                                                 <KeyboardArrowDown />
                                                             </InputAdornment>
                                                         ),
                                                     }}
                                                     inputRef={anchorRef}
-                                                    sx={{ width: 120, cursor: "pointer", borderRadius: 0, }}
+                                                    sx={{
+                                                        width: 130,
+                                                        cursor: "pointer",
+                                                        borderRadius: 0,
+                                                        '& .MuiInputBase-root': {
+                                                            paddingRight: '0px',
+                                                        },
+                                                        '& .MuiInputBase-input': {
+                                                            paddingRight: '8px',
+                                                        }
+                                                    }}
                                                 />
                                                 <TextField
                                                     sx={{ borderRadius: 0, }}
@@ -1066,9 +1093,10 @@ export default function BookingPage() {
                                                         {dialCode && (
                                                             <Box sx={{ p: 2, borderBottom: "1px solid #e0e0e0" }}>
                                                                 <Typography
+
                                                                     variant="caption"
                                                                     color="text.secondary"
-                                                                    sx={{ mb: 1, display: "block" }}
+                                                                    sx={{ mb: 1, display: "block", fontFamily: "'Open Sans', sans-serif", }}
                                                                 >
                                                                     Selected
                                                                 </Typography>
@@ -1217,12 +1245,22 @@ export default function BookingPage() {
                                                     InputProps={{
                                                         readOnly: true,
                                                         endAdornment: (
-                                                            <InputAdornment position="end">
+                                                            <InputAdornment position="start">
                                                                 <KeyboardArrowDown />
                                                             </InputAdornment>
                                                         ),
                                                     }}
-                                                    sx={{ width: 140, cursor: "pointer", borderRadius: 0, }}
+                                                    sx={{
+                                                        width: 170,
+                                                        cursor: "pointer",
+                                                        borderRadius: 0,
+                                                        '& .MuiInputBase-root': {
+                                                            paddingRight: '0px',
+                                                        },
+                                                        '& .MuiInputBase-input': {
+                                                            paddingRight: '8px',
+                                                        }
+                                                    }}
                                                 />
                                                 <TextField
                                                     sx={{ borderRadius: 0, }}
@@ -1296,7 +1334,7 @@ export default function BookingPage() {
                                     </Stack>
 
                                     <TextField
-                                        sx={{ borderRadius: 0 }}
+                                        sx={{ borderRadius: 0, fontFamily: "'Open Sans', sans-serif", }}
                                         fullWidth
                                         required
                                         label={t('cardInfor.email')}
@@ -1311,7 +1349,7 @@ export default function BookingPage() {
                                     />
 
                                     <TextField
-                                        sx={{ borderRadius: 0 }}
+                                        sx={{ borderRadius: 0, }}
                                         fullWidth
                                         multiline
                                         rows={4}
@@ -1329,18 +1367,18 @@ export default function BookingPage() {
                             <Card sx={{ py: 3 }}>
                                 <Typography
                                     variant="h6"
-                                    sx={{ mb: 2, fontWeight: 600, color: '#594a39' }}
+                                    sx={{ mb: 2, fontWeight: 600, color: '#594a39', fontFamily: "'Open Sans', sans-serif", }}
                                 >
                                     {t('policy.title')}
                                 </Typography>
 
                                 <Stack spacing={2}>
-                                    <Typography variant="body2">
+                                    <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
                                         <strong>{t('policy.line1')}</strong>
                                     </Typography>
-                                    <Typography variant="body2">{t('policy.line2')}</Typography>
-                                    <Typography variant="body2">{t('policy.line3')}</Typography>
-                                    <Typography variant="body2">{t('policy.line4')}</Typography>
+                                    <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }} >{t('policy.line2')}</Typography>
+                                    <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>{t('policy.line3')}</Typography>
+                                    <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>{t('policy.line4')}</Typography>
                                 </Stack>
                             </Card>
                             {/* Confirm Button */}
@@ -1349,7 +1387,9 @@ export default function BookingPage() {
                                     variant="contained"
                                     onClick={handleSubmit}
                                     endIcon={<ArrowForwardIosIcon sx={{ fontSize: 16 }} />}
+                                    disabled={!isBookingInfoComplete}
                                     sx={{
+                                        fontFamily: "'Open Sans', sans-serif",
                                         bgcolor: "#9e2265",
                                         color: "white",
                                         fontWeight: 600,
@@ -1366,6 +1406,15 @@ export default function BookingPage() {
                                     {t('confirm')}
                                 </Button>
                             </Box>
+                            {bookingError && (
+                                <Typography
+                                    color="error"
+                                    align="center"
+                                    sx={{ mt: 1.5, fontFamily: "'Open Sans', sans-serif", }}
+                                >
+                                    {bookingError}
+                                </Typography>
+                            )}
                         </Stack>
                     </Grid>
                 </Grid>

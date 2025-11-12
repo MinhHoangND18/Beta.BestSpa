@@ -289,6 +289,7 @@ export default function SpaMenu() {
                 <Typography
                   variant="h5"
                   sx={{
+                    fontFamily: "'Open Sans', sans-serif", fontSize: '14px',
                     fontWeight: 600,
                     mb: 3,
                     color: '#9e2265',
@@ -320,13 +321,13 @@ export default function SpaMenu() {
                           textAlign: 'left',
                         }}
                       >
-                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600 , fontFamily: "'Open Sans', sans-serif", fontSize: '20px',}}>
                           {service.title}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontFamily: "'Open Sans', sans-serif", fontSize: '14px', }}>
                           {service.description}
                         </Typography>
-                        <Typography sx={{ mt: 1 }}>
+                        <Typography sx={{ mt: 1, fontFamily: "'Open Sans', sans-serif", fontSize: '14px', }}>
                           {service.duration} &bull; <strong>{service.price}</strong>
                         </Typography>
                       </Box>
@@ -334,6 +335,7 @@ export default function SpaMenu() {
                         variant="contained"
                         onClick={() => handleBookNow(service.title)}
                         sx={{
+                          fontFamily: "'Open Sans', sans-serif", fontSize: '15px',
                           borderRadius: 0,
                           background: '#9e2265',
                           width: { xs: '100%', sm: '150px' },
@@ -372,7 +374,7 @@ export default function SpaMenu() {
         {/* Note section */}
         <Typography
           variant="body1"
-          sx={{ mb: 1, color: "text.primary" }}
+          sx={{ mb: 1, color: "text.primary" , fontFamily: "'Open Sans', sans-serif", fontSize: '14px',}}
         >
           <strong>{t('menu.noteLabel')}</strong> {t('menu.note')}{" "}
           <Link
@@ -388,7 +390,7 @@ export default function SpaMenu() {
         {/* Description */}
         <Typography
           variant="body1"
-          sx={{ mb: 4, color: "text.primary", maxWidth: 800, mx: "auto" }}
+          sx={{ mb: 4, color: "text.primary", maxWidth: 800, mx: "auto", fontFamily: "'Open Sans', sans-serif", fontSize: '14px', }}
         >
           {t('menu.description')}{" "}
           <Link
@@ -409,13 +411,13 @@ export default function SpaMenu() {
             download="Menu_SenSpa_Danang_2025.pdf"
             variant="contained"
             sx={{
+              fontFamily: "'Open Sans', sans-serif", fontSize: '18px',
               bgcolor: "#9e2265",
               color: "white",
               textTransform: "uppercase",
               px: 6,
               py: 1.5,
               fontWeight: 600,
-              fontSize: "1rem",
               borderRadius: 0,
               "&:hover": {
                 bgcolor: "#7b1b52",
