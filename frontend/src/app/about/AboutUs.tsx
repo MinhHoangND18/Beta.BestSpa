@@ -51,13 +51,14 @@ const AboutUs: React.FC = () => {
                 <Box
                     ref={aboTopRef}
                     sx={{
-                        width: "100vw",
+                        width: "100%",
                         position: "relative",
                         top: 0,
                         left: 0,
                         bgcolor: "#9e2265",
                         py: 4,
                         textAlign: "center",
+                        overflowX: "hidden",
                     }}
                 >
                     <Typography

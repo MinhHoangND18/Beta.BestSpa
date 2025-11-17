@@ -84,6 +84,16 @@ export class ServicesController {
     return this.servicesService.findDiscounted();
   }
 
+  @Get('menu')
+  @ApiOperation({ summary: 'Lấy dịch vụ theo danh mục cho menu (grouped by category)' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Danh sách categories và services grouped by category',
+  })
+  findForMenu() {
+    return this.servicesService.findForMenu();
+  }
+
   @Get('statistics')
   @ApiOperation({ summary: 'Lấy thống kê dịch vụ' })
   @ApiResponse({

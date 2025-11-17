@@ -52,7 +52,7 @@ export default function GalleryPage() {
             <Box
                 ref={galTopRef}
                 sx={{
-                    width: "100vw",
+                    width: "100%",
                     position: "relative",
                     left: "50%",
                     right: "50%",
@@ -61,6 +61,7 @@ export default function GalleryPage() {
                     bgcolor: "#9e2265",
                     py: 4,
                     textAlign: "center",
+                    overflowX: "hidden",
                 }}
             >
                 <Typography

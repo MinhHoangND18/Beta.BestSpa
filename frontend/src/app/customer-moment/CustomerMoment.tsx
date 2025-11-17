@@ -1,9 +1,18 @@
 'use client'
 
-import { useRef } from "react";
-import Image from "next/image";
-import { Box, Container, Grid, Typography, Card, CardMedia } from "@mui/material";
+import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
+import {
+    Box,
+    Container,
+    Typography,
+    Dialog,
+    IconButton,
+    Grid,
+} from '@mui/material';
+// import Grid from '@mui/material/Grid2'; 
+import CloseIcon from '@mui/icons-material/Close';
 
 interface GalleryImage {
     src: string;
@@ -38,80 +47,124 @@ const galleryImages: GalleryImage[] = [
 export default function CustomerMomentPage() {
     const { t } = useTranslation('common');
     const aboTopRef = useRef<HTMLDivElement | null>(null);
+    const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
     return (
-        <Box component="main">
-            <Container maxWidth="lg" >
-                {/* Tiêu đề */}
-                <Box
-                    ref={aboTopRef}
+        <Box sx={{ minHeight: '100vh', bgcolor: '#fafafa', fontFamily: 'sans-serif' }}>
+
+            {/* Tiêu đề */}
+            <Box
+                ref={aboTopRef}
+                sx={{
+                    width: "100%",
+                    position: "relative",
+                    top: 0,
+                    left: 0,
+                    bgcolor: "#9e2265",
+                    py: 4,
+                    textAlign: "center",
+                    overflowX: "hidden",
+                }}
+            >
+                <Typography
+                    variant="h3"
                     sx={{
-                        width: "100vw",
-                        position: "relative",
-                        left: "50%",
-                        right: "50%",
-                        marginLeft: "-50vw",
-                        marginRight: "-50vw",
-                        bgcolor: "#9e2265",
-                        py: 4,
-                        textAlign: "center",
+                        mb: 0,
+                        fontFamily: "'MTD Valky', serif",
+                        fontWeight: 500,
+                        letterSpacing: "0.05em",
+                        fontSize: { xs: "1.5rem", md: "2.5rem" },
+                        textTransform: "uppercase",
+                        color: "#ffffff",
+                        textShadow: "0 4px 16px rgba(0,0,0,0.4)",
                     }}
                 >
-                    <Typography
-                        variant="h3"
-                        sx={{
-                            mb: 0,
-                            fontFamily: "'MTD Valky', serif",
-                            fontWeight: 500,
-                            letterSpacing: "0.05em",
-                            fontSize: { xs: "1.5rem", md: "2.5rem" },
-                            textTransform: "uppercase",
-                            color: "#ffffff",
-                            textShadow: "0 4px 16px rgba(0,0,0,0.4)",
-                        }}
-                    >
-                        {t('customerMoment.title')}
-                    </Typography>
-                </Box>
+                    {t('customerMoment.title')}
+                </Typography>
+            </Box>
 
-                {/* Gallery */}
+            {/* Gallery */}
+            <Container maxWidth="lg">
                 <Grid container spacing={2} sx={{ mt: 4 }}>
                     {galleryImages.map((img, index) => (
                         <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                            <Card
-                                elevation={3}
+                            <Box
                                 sx={{
-                                    cursor: "pointer",
-                                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                                    height: "100%",
-                                    "&:hover": {
-                                        transform: "translateY(-4px)",
-                                        boxShadow: 6,
+                                    position: 'relative',
+                                    borderRadius: 2,
+                                    overflow: 'hidden',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: 2,
+                                    '&:hover': {
+                                        transform: 'translateY(-5px)',
+                                        boxShadow: 4,
                                     },
+                                    height: 250,
                                 }}
+                                onClick={() => setSelectedImage(img)}
                             >
-                                <CardMedia
-                                    sx={{
-                                        position: "relative",
-                                        paddingTop: "75%", 
-                                        overflow: "hidden",
-                                    }}
-                                >
-                                    <Image
-                                        src={img.src}
-                                        alt={img.alt}
-                                        fill
-                                        style={{
-                                            objectFit: "cover",
-                                        }}
-                                        sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                                        loading="lazy"
-                                    />
-                                </CardMedia>
-                            </Card>
+                                <Image
+                                    src={img.src}
+                                    alt={img.alt}
+                                    fill
+                                    style={{ objectFit: 'cover' }}
+                                    sizes="(max-width: 600px) 100vw, 25vw"
+                                />
+                            </Box>
                         </Grid>
                     ))}
                 </Grid>
             </Container>
+            <Dialog
+                open={Boolean(selectedImage)}
+                onClose={() => setSelectedImage(null)}
+                maxWidth="lg"
+                PaperProps={{
+                    sx: {
+                        bgcolor: 'rgba(0,0,0,0.9)',
+                        boxShadow: 'none',
+                        position: 'relative',
+                    },
+                }}
+            >
+                <IconButton
+                    onClick={() => setSelectedImage(null)}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                        color: 'white',
+                        bgcolor: 'rgba(0,0,0,0.5)',
+                        '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' },
+                    }}
+                >
+                    <CloseIcon fontSize="large" />
+                </IconButton>
+
+                {selectedImage && (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            maxHeight: '90vh',
+                            p: 2,
+                        }}
+                    >
+                        <Image
+                            src={selectedImage.src}
+                            alt={selectedImage.alt}
+                            width={1200}
+                            height={800}
+                            style={{
+                                maxWidth: '100%',
+                                maxHeight: '85vh',
+                                objectFit: 'contain',
+                            }}
+                        />
+                    </Box>
+                )}
+            </Dialog>
         </Box>
     );
 }

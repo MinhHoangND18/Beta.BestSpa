@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, IsNull } from 'typeorm';
 import { Service, ServiceStatus } from './entities/services.entity';
+import { ServiceCategory } from '../service_categories/entities/service_categories.entity';
 import {
   CreateServiceDto,
   UpdateServiceDto,
@@ -18,6 +19,8 @@ export class ServicesService {
   constructor(
     @InjectRepository(Service)
     private readonly serviceRepository: Repository<Service>,
+    @InjectRepository(ServiceCategory)
+    private readonly categoryRepository: Repository<ServiceCategory>,
   ) {}
 
   async create(createDto: CreateServiceDto): Promise<Service> {
@@ -308,5 +311,51 @@ export class ServicesService {
       topExpensiveServices: topExpensive,
       servicesByCategory,
     };
+  }
+
+  async findForMenu(): Promise<{ categories: any[]; servicesByCategory: any }> {
+    // Get all active categories ordered by displayOrder
+    const categories = await this.categoryRepository.find({
+      where: { isActive: true },
+      order: { displayOrder: 'ASC' },
+    });
+
+    // Get all active services with their categories
+    const services = await this.serviceRepository.find({
+      where: { status: ServiceStatus.ACTIVE },
+      relations: ['category'],
+      order: { price: 'ASC' },
+    });
+
+    // Group services by category
+    const servicesByCategory: { [key: string]: any[] } = {};
+    
+    categories.forEach((category) => {
+      servicesByCategory[category.id.toString()] = services
+        .filter((service) => service.categoryId === category.id)
+        .map((service) => ({
+          id: service.id.toString(),
+          title: service.name,
+          description: service.description || '',
+          duration: `${service.durationMinutes} ${service.durationMinutes === 1 ? 'minute' : 'minutes'}`,
+          price: this.formatPrice(service.discountPrice || service.price),
+          priceValue: Number(service.discountPrice || service.price),
+        }));
+    });
+
+    return {
+      categories: categories.map((cat) => ({
+        id: cat.id.toString(),
+        name: cat.name,
+        displayOrder: cat.displayOrder,
+      })),
+      servicesByCategory,
+    };
+  }
+
+  private formatPrice(price: number): string {
+    const vndPrice = Math.round(price);
+    const usdPrice = (price / 27000).toFixed(2); // Assuming 1 USD = 27,000 VND
+    return `${vndPrice.toLocaleString('vi-VN')} ₫ ($${usdPrice})`;
   }
 }

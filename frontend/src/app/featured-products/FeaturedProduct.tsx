@@ -121,13 +121,14 @@ export default function FeaturedProducts() {
             <Box
                 ref={feaTopRef}
                 sx={{
-                    width: "100vw",
+                    width: "100%",
                     position: "relative",
                     top: 0,
                     left: 0,
                     bgcolor: "#9e2265",
                     py: 4,
                     textAlign: "center",
+                    overflowX: "hidden",
                 }}
             >
                 <Typography
@@ -167,7 +168,7 @@ export default function FeaturedProducts() {
                     <Card
                         key={product.id}
                         sx={{
-                            // borderRadius: 3,
+                            borderRadius: 0,
                             // boxShadow: 3,
                             transition: "transform 0.3s ease",
                             // "&:hover": { transform: "scale(1.05)" },
@@ -181,7 +182,11 @@ export default function FeaturedProducts() {
                             height="350"
                             image={product.image}
                             alt={product.title}
-                            sx={{ objectFit: "cover", cursor: "pointer" }}
+                            sx={{ 
+                                objectFit: "cover", 
+                                cursor: "pointer",
+                                borderRadius: 0,
+                            }}
                             onClick={() => handleBookNow(product)}
                         />
                         <CardContent sx={{ flexGrow: 1 }}>

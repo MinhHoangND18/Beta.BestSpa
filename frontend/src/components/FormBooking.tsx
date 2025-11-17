@@ -99,6 +99,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
             return;
         }
 
+        const selectedService = selectedProduct?.title || selectedTreatment || null;
+        const selectedServiceId = selectedProduct?.id || null;
+
         localStorage.setItem(
             "bookingData",
             JSON.stringify({
@@ -106,6 +109,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 date: formData.date?.toISOString(),
                 time: formData.time,
                 people: formData.people,
+                selectedService: selectedService,
+                selectedServiceId: selectedServiceId,
             })
         );
 

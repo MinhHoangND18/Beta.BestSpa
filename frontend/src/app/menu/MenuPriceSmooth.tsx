@@ -185,17 +185,18 @@ export default function SpaMenu() {
   }, [activeTab, isMobile]);
 
   return (
-    <Container sx={{ py: 0, m: 0, p: 0 }}>
+    <Box sx={{ flexGrow: 1 }}>
       <Box
         ref={menuTopRef}
         sx={{
-          width: "100vw",
+          width: "100%",
           position: "relative",
           top: 0,
           left: 0,
           bgcolor: "#9e2265",
           py: 4,
           textAlign: "center",
+          overflowX: "hidden",
         }}
       >
         <Typography
@@ -218,9 +219,10 @@ export default function SpaMenu() {
       <Box
         sx={{
           px: { xs: 2, md: 16 },
-          width: "100vw",
+          width: "100%",
           textAlign: "center",
           justifyContent: "center",
+      
         }}
       >
         {/* Sticky Tabs */}
@@ -366,9 +368,10 @@ export default function SpaMenu() {
         sx={{
           py: 4,
           px: { xs: 2, md: 16 },
-          width: "100vw",
+          width: "100%",
           textAlign: "center",
           justifyContent: "center",
+          overflowX: "hidden",
         }}
       >
         {/* Note section */}
@@ -428,6 +431,6 @@ export default function SpaMenu() {
           </Button>
         </Stack>
       </Box>
-    </Container>
+    </Box>
   );
 }

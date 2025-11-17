@@ -16,7 +16,7 @@ import { ServiceStatus } from '../entities/services.entity';
 import { Type, Transform } from 'class-transformer';
 
 export class CreateServiceDto {
-  @ApiProperty({ maxLength: 200, example: 'Cắt tóc nam cơ bản' })
+  @ApiProperty({ maxLength: 200, example: '' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(200)

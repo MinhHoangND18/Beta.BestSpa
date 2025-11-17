@@ -240,7 +240,7 @@ const Header: React.FC = () => {
   }, [aboutAnchor]);
 
   return (
-    <Box>
+    <Box sx={{ flexGrow: 1 }}>
       {/* Banner */}
       {showBanner && (
         <Alert

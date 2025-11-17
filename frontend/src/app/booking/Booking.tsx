@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -92,6 +92,22 @@ export default function BookingPage() {
 
     const pickerRef = useRef<HTMLDivElement | null>(null);
     const socialPickerRef = useRef<HTMLDivElement>(null);
+    const cardInfoRef = useRef<HTMLDivElement | null>(null);
+    const mainContentRef = useRef<HTMLDivElement | null>(null);
+
+    const scrollToContactInfo = useCallback(() => {
+        if (!cardInfoRef.current) return;
+        const rect = cardInfoRef.current.getBoundingClientRect();
+        const offset = window.scrollY + rect.top - 120; 
+        window.scrollTo({ top: offset < 0 ? 0 : offset, behavior: "smooth" });
+    }, []);
+
+    const scrollToMainContent = useCallback(() => {
+        if (!mainContentRef.current) return;
+        const rect = mainContentRef.current.getBoundingClientRect();
+        const offset = window.scrollY + rect.top ;
+        window.scrollTo({ top: offset < 0 ? 0 : offset, behavior: "smooth" });
+    }, []);
 
     const steps: Step[] = [
         { icon: "/reserve.svg", label: t('steps.reserve'), active: true },
@@ -162,6 +178,7 @@ export default function BookingPage() {
         date: "",
         time: "",
         people: "",
+        selectedService: "",
     });
     const [bookingError, setBookingError] = useState<string | null>(null);
 
@@ -179,6 +196,7 @@ export default function BookingPage() {
     const numberOfGuests = parseInt(bookingData.people || "0");
     const [guestServices, setGuestServices] = useState<number[][]>([]);
     const [guestOpen, setGuestOpen] = useState<boolean[]>([]);
+    const hasAutoSelectedRef = useRef(false);
 
     function arraysEqual2D(a: number[][], b: number[][]): boolean {
         if (a.length !== b.length) return false;
@@ -207,6 +225,35 @@ export default function BookingPage() {
             setGuestOpen(newOpen);
         }
     }, [numberOfGuests]);
+
+    useEffect(() => {
+        if (
+            bookingData.selectedService && 
+            numberOfGuests > 0 && 
+            guestServices.length === numberOfGuests &&
+            !hasAutoSelectedRef.current
+        ) {
+            const selectedTreatment = treatments.find(
+                (t) => t.name === bookingData.selectedService
+            );
+
+            if (selectedTreatment && (!guestServices[0] || guestServices[0].length === 0)) {
+                const newGuestServices = [...guestServices];
+                newGuestServices[0] = [selectedTreatment.id];
+                setGuestServices(newGuestServices);
+                hasAutoSelectedRef.current = true;
+
+                // Clear selectedService from localStorage after using it
+                const savedData = localStorage.getItem("bookingData");
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    delete data.selectedService;
+                    localStorage.setItem("bookingData", JSON.stringify(data));
+                    setBookingData((prev) => ({ ...prev, selectedService: "" }));
+                }
+            }
+        }
+    }, [bookingData.selectedService, numberOfGuests, guestServices, treatments]);
 
     const formatDate = (dateString: string) => {
         if (!dateString) return "";
@@ -425,6 +472,7 @@ export default function BookingPage() {
         e.preventDefault();
         if (!isBookingInfoComplete) {
             setBookingError(t('booking.completeReservationDetails'));
+            scrollToMainContent();
             return;
         }
         setBookingError(null);
@@ -433,6 +481,7 @@ export default function BookingPage() {
             router.push("/thanks");
         } else {
             console.log("Form has errors");
+            scrollToContactInfo();
         }
     };
 
@@ -577,10 +626,11 @@ export default function BookingPage() {
                 <Grid container spacing={2} direction="row-reverse"
                     sx={{
                         py: 4,
-                        maxWidth: { xs: '100vw', sm: '90vw', md: '75vw' },
+                        maxWidth: { xs: '100%', sm: '90vw', md: '75vw' },
                         mx: { xs: 0, sm: 2 },
                         px: { xs: 0, sm: 2 },
                         width: '100%',
+                        overflowX: "hidden",
                     }}
                 >
                     <Grid item xs={16} md={4}>
@@ -612,7 +662,6 @@ export default function BookingPage() {
                                         float: "right",
                                         transform: showSummary ? "rotate(180deg)" : "rotate(0deg)",
                                         transition: "0.3s",
-                                        bgcolor: showSummary ? 'none' : 'none',
                                     }}
                                 />
                             </Typography>
@@ -778,7 +827,7 @@ export default function BookingPage() {
                     </Grid>
 
                     {/* Main Content */}
-                    <Grid item xs={16} md={8}>
+                    <Grid item xs={16} md={8} ref={mainContentRef}>
 
                         <Stack spacing={0} sx={{
                             paddingRight: 2,
@@ -858,7 +907,7 @@ export default function BookingPage() {
                                                         fontFamily: "'Open Sans', sans-serif",
                                                         color: '#9e2265',
                                                         fontSize: '20',
-                                                        fontWeight: 300,
+                                                        fontWeight: 600,
                                                     }}>
                                                     {t('booking.selectTreatment')}
                                                 </Typography>
@@ -877,7 +926,7 @@ export default function BookingPage() {
                                                         border: (guestServices[index] || []).includes(
                                                             treatment.id
                                                         )
-                                                            ? "2px solid #9e2265"
+                                                            ? "1px solid #9e2265"
                                                             : "1px solid #e0e0e0",
                                                     }}
                                                 >
@@ -887,7 +936,18 @@ export default function BookingPage() {
                                                         alignItems="flex-start"
                                                     >
                                                         <Box sx={{ flex: 1 }}>
-                                                            <Typography variant="h6" sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}>
+                                                            <Typography 
+                                                                variant="h6" 
+                                                                onClick={() => toggleGuestService(index, treatment.id)}
+                                                                sx={{ 
+                                                                    mb: 1, 
+                                                                    fontFamily: "'Open Sans', sans-serif",
+                                                                    cursor: "pointer",
+                                                                    "&:hover": {
+                                                                        color: "#9e2265",
+                                                                    },
+                                                                }}
+                                                            >
                                                                 {treatment.name}
                                                             </Typography>
                                                             <Typography
@@ -974,6 +1034,7 @@ export default function BookingPage() {
 
                             {/* Contact Info */}
                             <Card
+                                ref={cardInfoRef}
                                 sx={{
                                     py: 3,
                                     cursor: "pointer",
