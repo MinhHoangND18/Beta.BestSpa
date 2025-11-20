@@ -90,7 +90,7 @@ export class ServicesController {
     status: HttpStatus.OK,
     description: 'Danh sách categories và services grouped by category',
   })
-  findForMenu() {
+  findForMenu(@Query('lang') lang: string) {
     return this.servicesService.findForMenu();
   }
 

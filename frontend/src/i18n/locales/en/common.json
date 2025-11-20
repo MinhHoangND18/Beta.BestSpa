@@ -48,7 +48,8 @@
     "appointmentSummary": "Appointment Summary",
     "selectTreatmentForGuest": "Select treatment for Guest",
     "selectTreatment": "Select Treatment",
-    "applyThisSameTreatmentForAllGuests": "Apply this same treatment for all guests"
+    "applyThisSameTreatmentForAllGuests": "Apply this same treatment for all guests",
+    "minutes": "minutes"
   },
   "footer": {
     "ourLocations": "OUR LOCATIONS",

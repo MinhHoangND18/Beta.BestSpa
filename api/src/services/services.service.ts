@@ -13,6 +13,9 @@ import {
   QueryServiceDto,
   ServiceStatisticsDto,
 } from './dto/services.dto';
+import { TranslationService } from '../translation/translation.service';
+
+const USD_TO_VND_RATE = 27000;
 
 @Injectable()
 export class ServicesService {
@@ -22,6 +25,11 @@ export class ServicesService {
     @InjectRepository(ServiceCategory)
     private readonly categoryRepository: Repository<ServiceCategory>,
   ) {}
+
+  private calculatePriceUSD(priceVND: number): number {
+    const roundedVND = Math.round(priceVND);
+    return Number((roundedVND / USD_TO_VND_RATE).toFixed(2));
+  }
 
   async create(createDto: CreateServiceDto): Promise<Service> {
     // Validate discount price
@@ -35,7 +43,12 @@ export class ServicesService {
       );
     }
 
-    const service = this.serviceRepository.create(createDto);
+    const priceUSD = this.calculatePriceUSD(createDto.price);
+    const service = this.serviceRepository.create({
+      ...createDto,
+      priceUSD: priceUSD,
+    });
+    
     return await this.serviceRepository.save(service);
   }
 
@@ -210,6 +223,10 @@ export class ServicesService {
         'Discount price must be less than regular price',
       );
     }
+    
+    if (updateDto.price !== undefined) {
+      updateDto.priceUSD = this.calculatePriceUSD(updateDto.price);
+    }
 
     Object.assign(service, updateDto);
     return await this.serviceRepository.save(service);
@@ -355,7 +372,7 @@ export class ServicesService {
 
   private formatPrice(price: number): string {
     const vndPrice = Math.round(price);
-    const usdPrice = (price / 27000).toFixed(2); // Assuming 1 USD = 27,000 VND
+    const usdPrice = (price / USD_TO_VND_RATE).toFixed(2); 
     return `${vndPrice.toLocaleString('vi-VN')} ₫ ($${usdPrice})`;
   }
 }

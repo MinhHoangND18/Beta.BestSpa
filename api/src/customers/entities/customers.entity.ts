@@ -29,7 +29,7 @@ export enum CustomerStatus {
 }
 
 @Entity('customers')
-@Index(['phone'])
+// @Index(['phone'])
 @Index(['email'])
 @Index(['customerType'])
 @Index(['status'])

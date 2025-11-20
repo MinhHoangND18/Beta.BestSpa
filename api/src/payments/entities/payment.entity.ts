@@ -27,7 +27,7 @@ export enum PaymentStatus {
 
 @Entity('payments')
 @Index(['invoiceId'])
-@Index(['paymentCode'])
+// @Index(['paymentCode'])
 @Index(['paymentDate'])
 export class Payment {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })

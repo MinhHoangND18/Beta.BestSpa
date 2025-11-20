@@ -48,7 +48,8 @@
     "appointmentSummary": "예약 요약",
     "selectTreatmentForGuest": "게스트 의 트리트먼트 선택",
     "selectTreatment": "트리트먼트 선택",
-    "applyThisSameTreatmentForAllGuests": "모든 게스트에게 동일한 처리를 적용합니다"
+    "applyThisSameTreatmentForAllGuests": "모든 게스트에게 동일한 처리를 적용합니다",
+    "minutes": "분"
   },
   "footer": {
     "ourLocations": "위치",

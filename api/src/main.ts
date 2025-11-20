@@ -5,15 +5,8 @@ import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
-
-  // Enable CORS
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
-
-  // ValidationPipe toàn cục
+  app.enableCors();
+  
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -22,8 +15,6 @@ async function bootstrap() {
     }),
   );
 
-  const port = configService.get<number>('PORT') || 3000;
-  await app.listen(port);
-  console.log(`Server running on port ${port}`);
+  await app.listen(3001);
 }
 bootstrap();

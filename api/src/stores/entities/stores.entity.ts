@@ -13,7 +13,7 @@ import { User } from '../../users/entities/users.entity';
 import { Staff } from '../../staff/entities/staff.entity'; 
 
 @Entity('stores')
-@Index(['domain'])
+//@Index(['domain'])
 @Index(['isActive'])
 export class Store {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })

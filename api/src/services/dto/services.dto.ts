@@ -53,6 +53,11 @@ export class CreateServiceDto {
   @Min(0)
   @ValidateIf((o) => o.discountPrice !== null && o.discountPrice !== undefined)
   discountPrice?: number;
+  
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  priceUSD?: number;
 
   @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
   @IsUrl()
@@ -85,7 +90,10 @@ export class QueryServiceDto {
   @IsInt()
   categoryId?: number;
 
-  @ApiPropertyOptional({ enum: ServiceStatus, description: 'Lọc theo trạng thái' })
+  @ApiPropertyOptional({
+    enum: ServiceStatus,
+    description: 'Lọc theo trạng thái',
+  })
   @IsOptional()
   @IsEnum(ServiceStatus)
   status?: ServiceStatus;
@@ -127,7 +135,13 @@ export class QueryServiceDto {
   maxDuration?: number;
 
   @ApiPropertyOptional({
-    enum: ['price_asc', 'price_desc', 'duration_asc', 'duration_desc', 'newest'],
+    enum: [
+      'price_asc',
+      'price_desc',
+      'duration_asc',
+      'duration_desc',
+      'newest',
+    ],
     description: 'Sắp xếp',
   })
   @IsOptional()

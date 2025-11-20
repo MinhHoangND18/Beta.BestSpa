@@ -181,7 +181,7 @@ export default function SpaMenu() {
   }, [activeTab, isMobile]);
 
   return (
-    <Container sx={{ py: 0, m: 0, p: 0 }}>
+    <Container sx={{ py: 0, m: 0, p: 0,}}>
       <Box
         ref={menuTopRef}
         sx={{

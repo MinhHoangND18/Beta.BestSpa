@@ -40,6 +40,9 @@ export class Service {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   price: number;
+  
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  priceUSD: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   discountPrice: number;

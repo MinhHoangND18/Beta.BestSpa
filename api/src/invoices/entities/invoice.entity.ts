@@ -25,7 +25,7 @@ export enum PaymentStatus {
 }
 
 @Entity('invoices')
-@Index(['voucher'])
+// @Index(['voucher'])
 @Index(['customerId'])
 @Index(['bookingId'])
 @Index(['storeId', 'createdAt'])

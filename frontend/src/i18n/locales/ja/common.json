@@ -48,7 +48,8 @@
     "appointmentSummary": "予約概要",
     "selectTreatmentForGuest": "ゲストのトリートメントを選択",
     "selectTreatment": "トリートメントを選択",
-    "applyThisSameTreatmentForAllGuests": "すべてのゲストに同じトリートメントを適用します"
+    "applyThisSameTreatmentForAllGuests": "すべてのゲストに同じトリートメントを適用します",
+    "minutes": "分"
   },
   "footer": {
     "ourLocations": "当店の場所",

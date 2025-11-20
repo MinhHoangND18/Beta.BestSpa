@@ -959,7 +959,7 @@ export default function BookingPage() {
                                                             </Typography>
                                                             <Stack direction="row" spacing={2}>
                                                                 <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
-                                                                    {treatment.duration} minutes
+                                                                    {treatment.duration} {t('booking.minutes')}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="body2"

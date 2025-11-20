@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity('service_categories')
-@Index(['slug'])
+// @Index(['slug'])
 @Index(['isActive'])
 export class ServiceCategory {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
