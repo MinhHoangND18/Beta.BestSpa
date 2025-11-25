@@ -371,8 +371,8 @@ export default function SpaMenu() {
                               fontSize: "14px",
                             }}
                           >
-                            {service.durationMinutes}
-                            &bull;{" "}
+                            {service.durationMinutes} {t("booking.minutes")}
+                            &bull;
                             <strong>
                               {new Intl.NumberFormat("vi-VN", {
                                 style: "currency",
