@@ -348,6 +348,7 @@ const AboutUs: React.FC = () => {
                                 fontSize: { xs: 18, md: 24 },
                                 px: { xs: 5, md: 8 },
                                 py: { xs: 1, md: 1.5 },
+                                '&:hover': { bgcolor: "#7a184e" },
                             }}
                         >
                             {t('about.bookNow')}

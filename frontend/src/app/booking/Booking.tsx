@@ -30,6 +30,9 @@ import {
     Portal,
     Popper,
     ClickAwayListener,
+    CircularProgress,
+    Alert,
+    Snackbar,
 } from "@mui/material";
 import {
     Close,
@@ -42,15 +45,38 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { allCountries } from "country-telephone-data";
 import { useTranslation } from 'react-i18next';
+import { createCustomer } from '@/lib/api/customers';
+import {
+    CreateCustomerDto,
+    CustomerType,
+    CustomerStatus,
+    Gender
+} from '@/types/customer';
 
-interface Treatment {
-    id: number;
-    name: string;
-    description: string;
-    duration: number;
-    price: number;
-    priceUSD: number;
-}
+import {
+    getServices,
+    getActiveServices,
+    deleteService,
+    createService,
+    updateService,
+} from '@/lib/api/services';
+import { getActiveServiceCategories } from '@/lib/api/service-categories';
+import {
+    Service,
+    ServiceCategory,
+    ServiceStatus,
+    QueryServiceDto,
+    UpdateServiceDto,
+    CreateServiceDto,
+    PaginatedServices,
+} from '@/types';
+import { createBooking } from '@/lib/api/bookings';
+import {
+    CreateBookingPayload,
+    BookingStatus,
+    Booking,
+
+} from '@/types/booking';
 
 interface Step {
     icon: string;
@@ -65,7 +91,23 @@ interface CountryData {
     priority: number;
     areaCodes?: string[];
 }
+interface Services {
+    [key: string]: Service[];
+}
+interface CustomerCreationResponse {
+    id?: number;
+    data?: {
+        id: number;
+    };
+    success?: boolean;
+    message?: string;
+}
 
+interface BookingApiSuccessResponse {
+    success: boolean;
+    data: Booking;
+    message?: string;
+}
 
 
 const socialApps = [
@@ -86,8 +128,6 @@ export default function BookingPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [showSocialPicker, setShowSocialPicker] = useState(false);
     const [showSummary, setShowSummary] = useState(true);
-    //   const [guestServices, setGuestServices] = useState<number[][]>([]);
-    //   const [guestOpen, setGuestOpen] = useState<boolean[]>([]);
     const [applyToAll, setApplyToAll] = useState(false);
 
     const pickerRef = useRef<HTMLDivElement | null>(null);
@@ -95,17 +135,48 @@ export default function BookingPage() {
     const cardInfoRef = useRef<HTMLDivElement | null>(null);
     const mainContentRef = useRef<HTMLDivElement | null>(null);
 
+    const [services, setServices] = useState<Service[]>([]);
+    const [loadingServices, setLoadingServices] = useState(true);
+    const [errorServices, setErrorServices] = useState<string | null>(null);
+    const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean;
+        message: string;
+        severity: 'success' | 'error';
+    }>({ open: false, message: '', severity: 'success' });
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            setLoadingServices(true);
+            try {
+                const params: QueryServiceDto = {
+                    status: 'active',
+                    limit: 9999,
+                };
+                const paginatedData = await getServices(params);
+                setServices(paginatedData.data);
+                setErrorServices(null);
+            } catch (error) {
+                console.error("Failed to fetch services:", error);
+                setErrorServices(t('error.failedToLoadTreatments'));
+            } finally {
+                setLoadingServices(false);
+            }
+        };
+
+        fetchServices();
+    }, []);
     const scrollToContactInfo = useCallback(() => {
         if (!cardInfoRef.current) return;
         const rect = cardInfoRef.current.getBoundingClientRect();
-        const offset = window.scrollY + rect.top - 120; 
+        const offset = window.scrollY + rect.top - 120;
         window.scrollTo({ top: offset < 0 ? 0 : offset, behavior: "smooth" });
     }, []);
 
     const scrollToMainContent = useCallback(() => {
         if (!mainContentRef.current) return;
         const rect = mainContentRef.current.getBoundingClientRect();
-        const offset = window.scrollY + rect.top ;
+        const offset = window.scrollY + rect.top;
         window.scrollTo({ top: offset < 0 ? 0 : offset, behavior: "smooth" });
     }, []);
 
@@ -115,41 +186,7 @@ export default function BookingPage() {
         { icon: "/confirm.svg", label: t('steps.confirm'), active: false },
     ];
 
-    const treatments: Treatment[] = [
-        { id: 33, name: t('treatments.33.title'), description: t('treatments.33.description'), duration: 120, price: 750000, priceUSD: 27.78 },
-        { id: 25, name: t('treatments.25.title'), description: t('treatments.25.description'), duration: 60, price: 450000, priceUSD: 16.67 },
-        { id: 26, name: t('treatments.26.title'), description: t('treatments.26.description'), duration: 150, price: 1100000, priceUSD: 40.74 },
-        { id: 27, name: t('treatments.27.title'), description: t('treatments.27.description'), duration: 150, price: 1050000, priceUSD: 38.89 },
-        { id: 28, name: t('treatments.28.title'), description: t('treatments.28.description'), duration: 120, price: 1150000, priceUSD: 42.59 },
-        { id: 29, name: t('treatments.29.title'), description: t('treatments.29.description'), duration: 180, price: 1150000, priceUSD: 42.59 },
-        { id: 30, name: t('treatments.30.title'), description: t('treatments.30.description'), duration: 210, price: 1350000, priceUSD: 50.00 },
-        { id: 31, name: t('treatments.31.title'), description: t('treatments.31.description'), duration: 60, price: 520000, priceUSD: 19.26 },
-        { id: 32, name: t('treatments.32.title'), description: t('treatments.32.description'), duration: 120, price: 690000, priceUSD: 25.56 },
-        { id: 17, name: t('treatments.17.title'), description: t('treatments.17.description'), duration: 90, price: 620000, priceUSD: 22.96 },
-        { id: 24, name: t('treatments.24.title'), description: t('treatments.24.description'), duration: 30, price: 300000, priceUSD: 11.11 },
-        { id: 23, name: t('treatments.23.title'), description: t('treatments.23.description'), duration: 30, price: 300000, priceUSD: 11.11 },
-        { id: 22, name: t('treatments.22.title'), description: t('treatments.22.description'), duration: 90, price: 450000, priceUSD: 16.67 },
-        { id: 21, name: t('treatments.21.title'), description: t('treatments.21.description'), duration: 90, price: 450000, priceUSD: 16.67 },
-        { id: 20, name: t('treatments.20.title'), description: t('treatments.20.description'), duration: 60, price: 290000, priceUSD: 10.74 },
-        { id: 19, name: t('treatments.19.title'), description: t('treatments.19.description'), duration: 30, price: 300000, priceUSD: 11.11 },
-        { id: 18, name: t('treatments.18.title'), description: t('treatments.18.description'), duration: 120, price: 720000, priceUSD: 26.67 },
-        { id: 16, name: t('treatments.16.title'), description: t('treatments.16.description'), duration: 90, price: 580000, priceUSD: 21.48 },
-        { id: 15, name: t('treatments.15.title'), description: t('treatments.15.description'), duration: 75, price: 490000, priceUSD: 18.15 },
-        { id: 14, name: t('treatments.14.title'), description: t('treatments.14.description'), duration: 60, price: 420000, priceUSD: 15.56 },
-        { id: 13, name: t('treatments.13.title'), description: t('treatments.13.description'), duration: 90, price: 580000, priceUSD: 21.48 },
-        { id: 12, name: t('treatments.12.title'), description: t('treatments.12.description'), duration: 75, price: 490000, priceUSD: 18.15 },
-        { id: 11, name: t('treatments.11.title'), description: t('treatments.11.description'), duration: 90, price: 550000, priceUSD: 20.37 },
-        { id: 10, name: t('treatments.10.title'), description: t('treatments.10.description'), duration: 75, price: 490000, priceUSD: 18.15 },
-        { id: 1, name: t('treatments.1.title'), description: t('treatments.1.description'), duration: 30, price: 250000, priceUSD: 9.26 },
-        { id: 9, name: t('treatments.9.title'), description: t('treatments.9.description'), duration: 60, price: 420000, priceUSD: 15.56 },
-        { id: 8, name: t('treatments.8.title'), description: t('treatments.8.description'), duration: 90, price: 550000, priceUSD: 20.37 },
-        { id: 7, name: t('treatments.7.title'), description: t('treatments.7.description'), duration: 75, price: 480000, priceUSD: 17.78 },
-        { id: 6, name: t('treatments.6.title'), description: t('treatments.6.description'), duration: 60, price: 390000, priceUSD: 14.44 },
-        { id: 5, name: t('treatments.5.title'), description: t('treatments.5.description'), duration: 90, price: 550000, priceUSD: 20.37 },
-        { id: 4, name: t('treatments.4.title'), description: t('treatments.4.description'), duration: 75, price: 480000, priceUSD: 17.78 },
-        { id: 3, name: t('treatments.3.title'), description: t('treatments.3.description'), duration: 60, price: 390000, priceUSD: 14.44 },
-        { id: 2, name: t('treatments.2.title'), description: t('treatments.2.description'), duration: 45, price: 310000, priceUSD: 11.48 },
-    ];
+
     const [formData, setFormData] = useState({
         fullName: "",
         phone: "",
@@ -158,13 +195,6 @@ export default function BookingPage() {
         content: "",
         socialApp: "",
     });
-
-    //   const [bookingData, setBookingData] = useState({
-    //     spa: "",
-    //     date: "",
-    //     time: "",
-    //     people: "",
-    //   });
 
     const [errors, setErrors] = useState({
         fullName: "",
@@ -226,14 +256,16 @@ export default function BookingPage() {
         }
     }, [numberOfGuests]);
 
+    // 4. CẬP NHẬT LOGIC AUTO-SELECT: DÙNG services THAY VÌ treatments
     useEffect(() => {
         if (
-            bookingData.selectedService && 
-            numberOfGuests > 0 && 
+            bookingData.selectedService &&
+            numberOfGuests > 0 &&
             guestServices.length === numberOfGuests &&
             !hasAutoSelectedRef.current
         ) {
-            const selectedTreatment = treatments.find(
+            // Sửa tên biến từ treatments thành services
+            const selectedTreatment = services.find(
                 (t) => t.name === bookingData.selectedService
             );
 
@@ -253,7 +285,7 @@ export default function BookingPage() {
                 }
             }
         }
-    }, [bookingData.selectedService, numberOfGuests, guestServices, treatments]);
+    }, [bookingData.selectedService, numberOfGuests, guestServices, services]); // CẬP NHẬT DEPENDENCY ARRAY
 
     const formatDate = (dateString: string) => {
         if (!dateString) return "";
@@ -264,13 +296,16 @@ export default function BookingPage() {
         return `${day}-${month}-${year}`;
     };
 
-    const getSelectedTreatmentsText = (services: number[]) => {
-        if (services.length === 0) return "";
-        return services
-            .map((id) => treatments.find((t) => t.id === id)?.name)
+    // 5. CẬP NHẬT LOGIC getSelectedTreatmentsText: DÙNG services THAY VÌ treatments
+    const getSelectedTreatmentsText = (serviceIds: number[]) => {
+        if (serviceIds.length === 0) return "";
+        return serviceIds
+            .map((id) => services.find((t) => t.id === id)?.name)
+            .filter(Boolean) // Loại bỏ các giá trị undefined/null
             .join(", ");
     };
 
+    // 6. CẬP NHẬT LOGIC toggleGuestService: DÙNG services THAY VÌ treatments
     const toggleGuestService = (guestIndex: number, serviceId: number) => {
         const newGuestServices = [...guestServices];
 
@@ -467,21 +502,222 @@ export default function BookingPage() {
 
         setErrors(newErrors);
     };
+    const createNewCustomer = async () => {
+        try {
+            setIsCreatingCustomer(true);
 
-    const handleSubmit = (e: React.FormEvent) => {
+            // Chuẩn bị dữ liệu customer
+            const customerData: CreateCustomerDto = {
+                fullName: formData.fullName.trim(),
+                phone: `${dialCode.replace(/[()]/g, '')}${formData.phone.trim()}`,
+                email: formData.email.trim(),
+                customerType: CustomerType.NEW,
+                status: CustomerStatus.ACTIVE,
+                notes: formData.content.trim() || undefined,
+                gender: undefined,
+                birthday: undefined,
+                address: undefined,
+                storeId: 1,
+            };
+
+            // Gọi API tạo customer
+            const response = await createCustomer(customerData);
+
+            console.log('Customer created successfully:', response);
+            // setSnackbar({
+            //     open: true,
+            //     message: 'Customer created successfully!',
+            //     severity: 'success'
+            // });
+
+            return response;
+        } catch (error) {
+            console.error('Error creating customer:', error);
+
+            // Hiển thị thông báo lỗi
+            setSnackbar({
+                open: true,
+                message: 'Failed to create customer. Please try again.',
+                severity: 'error'
+            });
+
+            throw error;
+        } finally {
+            setIsCreatingCustomer(false);
+        }
+    };
+    const createNewBooking = async (customerId: number) => {
+        try {
+            console.log('🔵 Starting createNewBooking with customerId:', customerId);
+
+            // Validate customerId trước khi gọi API
+            if (!customerId || typeof customerId !== 'number') {
+                throw new Error(`Invalid customerId: ${customerId}`);
+            }
+
+            let bookingDateFormatted = '';
+            if (bookingData.date) {
+                const ddmmyyyyPattern = /^(\d{2})-(\d{2})-(\d{4})$/;
+                const match = bookingData.date.match(ddmmyyyyPattern);
+
+                if (match) {
+                    const day = match[1];
+                    const month = match[2];
+                    const year = match[3];
+                    bookingDateFormatted = `${year}-${month}-${day}`;
+                } else if (/^\d{4}-\d{2}-\d{2}$/.test(bookingData.date)) {
+                    bookingDateFormatted = bookingData.date;
+                } else {
+                    const dateObj = new Date(bookingData.date);
+                    if (!isNaN(dateObj.getTime())) {
+                        const year = dateObj.getFullYear();
+                        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                        const day = String(dateObj.getDate()).padStart(2, '0');
+                        bookingDateFormatted = `${year}-${month}-${day}`;
+                    }
+                }
+            }
+
+            // Xử lý startTime - đảm bảo format HH:MM
+            let startTimeFormatted = bookingData.time;
+            if (bookingData.time) {
+                const timeParts = bookingData.time.split(':');
+                if (timeParts.length >= 2) {
+                    const hours = timeParts[0].padStart(2, '0');
+                    const minutes = timeParts[1].padStart(2, '0');
+                    startTimeFormatted = `${hours}:${minutes}`;
+                }
+            }
+
+            // Validate dữ liệu
+            if (!bookingDateFormatted) {
+                throw new Error('Invalid booking date format');
+            }
+            if (!startTimeFormatted) {
+                throw new Error('Invalid start time format');
+            }
+
+            const bookingPayload: CreateBookingPayload = {
+                customerId: customerId, // ✅ Đảm bảo customerId được truyền vào đúng
+                storeId: 1,
+                bookingDate: bookingDateFormatted,
+                startTime: startTimeFormatted,
+                status: BookingStatus.PENDING,
+                source: formData.socialApp || 'website',
+                notes: formData.content.trim() || undefined,
+                confirm: false,
+            };
+
+            console.log('📤 Booking Payload:', bookingPayload);
+
+            // Gọi API tạo booking
+            const response: BookingApiSuccessResponse = await createBooking(bookingPayload);
+
+            console.log('📥 Booking Response:', response);
+
+            if (response.success === false || !response.data) {
+                throw new Error(response.message || 'Booking creation failed: Server returned success: false or missing data.');
+            }
+
+            console.log('✅ Booking created successfully:', response.data);
+            return response;
+        } catch (error) {
+            console.error('❌ Error creating booking:', error);
+
+            if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as {
+                    response?: {
+                        data?: {
+                            message?: string;
+                        }
+                    }
+                };
+
+                console.error('❌ Error response from server:', axiosError.response?.data);
+
+                if (axiosError.response?.data?.message) {
+                    throw new Error(axiosError.response.data.message);
+                }
+            }
+
+            throw error;
+        }
+    };
+
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!isBookingInfoComplete) {
             setBookingError(t('booking.completeReservationDetails'));
             scrollToMainContent();
             return;
         }
+
         setBookingError(null);
-        if (validateForm()) {
-            console.log("Form is valid:", formData);
-            router.push("/thanks");
-        } else {
+        if (!validateForm()) {
             console.log("Form has errors");
             scrollToContactInfo();
+            return;
+        }
+
+        try {
+            setIsCreatingCustomer(true);
+            const customerResponse = await createNewCustomer();
+
+            let customerId: number;
+
+            if (customerResponse?.data?.id) {
+                customerId = customerResponse.data.id;
+            }
+            else if (customerResponse?.id) {
+                customerId = customerResponse.id;
+            }
+            else if (customerResponse?.success && customerResponse?.data?.id) {
+                customerId = customerResponse.data.id;
+            }
+            else if (typeof customerResponse === 'number') {
+                customerId = customerResponse;
+            }
+            else {
+                throw new Error('Failed to get customer ID from response. Please check API response format.');
+            }
+
+            if (!customerId || typeof customerId !== 'number' || customerId <= 0) {
+                throw new Error(`Invalid customer ID received: ${customerId}`);
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const bookingResponse = await createNewBooking(customerId);
+
+
+            setSnackbar({
+                open: true,
+                message: 'Booking created successfully! Thank you for your reservation.',
+                severity: 'success'
+            });
+
+            localStorage.removeItem('bookingData');
+
+            setTimeout(() => {
+                router.push("/thanks");
+            }, 1500);
+
+        } catch (error) {
+
+            let errorMessage = 'Failed to complete your booking. Please try again.';
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+
+            setSnackbar({
+                open: true,
+                message: errorMessage,
+                severity: 'error'
+            });
+        } finally {
+            setIsCreatingCustomer(false);
         }
     };
 
@@ -490,25 +726,25 @@ export default function BookingPage() {
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
         setAnchorEl((prev) => (prev ? null : e.currentTarget));
     };
-    // const handleClose = () => {
-    //     setAnchorEl(null);
-    // };
 
-    // Calculate totals
+
     const allSelected = guestServices
         .filter((ids) => ids && ids.length > 0)
-        .flatMap((ids) => treatments.filter((t) => ids.includes(t.id)));
+        .flatMap((ids) => services.filter((t) => ids.includes(t.id)));
 
-    const totalVND = allSelected.reduce((sum, t) => sum + t.price, 0);
-    const totalUSD = allSelected.reduce((sum, t) => sum + t.priceUSD, 0);
-    const discountVND = totalVND * 0.1;
-    const discountUSD = totalUSD * 0.1;
-    const finalVND = totalVND - discountVND;
-    const finalUSD = totalUSD - discountUSD;
+
+    const totalVND = allSelected.reduce((sum, t) => sum + Number(t.price), 0);
+    const totalUSD = allSelected.reduce((sum, t) => sum + Number(t.priceUSD || 0), 0);
+
+    const taxRate = 0.08;
+    const taxVND = totalVND * taxRate;
+    const taxUSD = totalUSD * taxRate;
+
+    const finalVND = totalVND + taxVND;
+    const finalUSD = totalUSD + taxUSD;
 
     return (
         <Box component="main">
-            {/* Steps */}
             <Box
                 sx={{
                     height: { xs: 100, md: 120 },
@@ -679,8 +915,6 @@ export default function BookingPage() {
                                     <List dense sx={{ px: 0, paddingX: 0, fontFamily: "'Open Sans', sans-serif" }}>
                                         <ListItem disableGutters >
                                             <ListItemText
-
-
                                                 primary={<span style={{ fontFamily: "'Open Sans', sans-serif" }}>
                                                     {t('booking.date')}:
                                                 </span>}
@@ -698,7 +932,7 @@ export default function BookingPage() {
 
                                         <ListItem disableGutters>
                                             <ListItemText
-                                                primary= {<span> {t('booking.time')}: </span>}
+                                                primary={<span> {t('booking.time')}: </span>}
                                                 secondary={bookingData.time || "Not selected"}
                                                 primaryTypographyProps={{
                                                     component: "span",
@@ -713,7 +947,7 @@ export default function BookingPage() {
 
                                         <ListItem disableGutters>
                                             <ListItemText
-                                                primary={ <span> {t('booking.location')}: </span>}
+                                                primary={<span> {t('booking.location')}: </span>}
                                                 secondary={bookingData.spa || "Not selected"}
                                                 primaryTypographyProps={{
                                                     component: "span",
@@ -728,7 +962,7 @@ export default function BookingPage() {
 
                                         <ListItem disableGutters>
                                             <ListItemText
-                                                primary= { <span> {t('booking.numberOfGuests')} : </span>}
+                                                primary={<span> {t('booking.numberOfGuests')} : </span>}
                                                 secondary={bookingData.people || "0"}
                                                 primaryTypographyProps={{
                                                     component: "span",
@@ -749,7 +983,7 @@ export default function BookingPage() {
                                             {guestServices.map((serviceIds, guestIndex) => {
                                                 if (!serviceIds || serviceIds.length === 0) return null;
 
-                                                const selectedTreatments = treatments.filter((t) =>
+                                                const selectedTreatments = services.filter((t) =>
                                                     serviceIds.includes(t.id)
                                                 );
 
@@ -788,7 +1022,7 @@ export default function BookingPage() {
                                                     </Typography>
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                                         {totalVND.toLocaleString()} ₫ ($
-                                                        {totalUSD.toFixed(2)})
+                                                        {Number(totalUSD).toFixed(2)})
                                                     </Typography>
                                                 </Stack>
                                                 <Stack
@@ -797,11 +1031,11 @@ export default function BookingPage() {
                                                     sx={{ color: "green" }}
                                                 >
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                                        {t('prices.discount')}
+                                                        {t('prices.tax')}
                                                     </Typography>
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                                        - {discountVND.toLocaleString()} ₫ ($
-                                                        {discountUSD.toFixed(2)})
+                                                        {taxVND.toLocaleString()} ₫ ($
+                                                        {Number(taxUSD).toFixed(2)})
                                                     </Typography>
                                                 </Stack>
                                                 <Stack direction="row" justifyContent="space-between">
@@ -815,7 +1049,7 @@ export default function BookingPage() {
                                                         variant="body1"
                                                         sx={{ fontWeight: 700, color: "#9e2265" }}
                                                     >
-                                                        {finalVND.toLocaleString()} ₫ (${finalUSD.toFixed(2)})
+                                                        {finalVND.toLocaleString()} ₫ (${Number(finalUSD).toFixed(2)})
                                                     </Typography>
                                                 </Stack>
                                             </Stack>
@@ -838,7 +1072,18 @@ export default function BookingPage() {
                             },
                         }}>
                             {/* Guest Services */}
-                            {Array.from({ length: numberOfGuests }, (_, index) => (
+                            {loadingServices && (
+                                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                                    <CircularProgress sx={{ color: '#9e2265' }} />
+                                </Box>
+                            )}
+                            {errorServices && (
+                                <Alert severity="error" sx={{ mb: 2 }}>
+                                    {errorServices}
+                                </Alert>
+                            )}
+
+                            {!loadingServices && !errorServices && Array.from({ length: numberOfGuests }, (_, index) => (
                                 <Card key={index} sx={{ p: 0 }}>
                                     <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: '#594a39', fontFamily: "'Open Sans', sans-serif", }}>
                                         {t('booking.selectTreatmentForGuest')} {index + 1}
@@ -917,14 +1162,14 @@ export default function BookingPage() {
                                             </Stack>
                                         </DialogTitle>
                                         <DialogContent>
-                                            {treatments.map((treatment) => (
+                                            {services.map((service) => (
                                                 <Paper
-                                                    key={treatment.id}
+                                                    key={service.id}
                                                     sx={{
                                                         p: 1,
                                                         mb: 2,
                                                         border: (guestServices[index] || []).includes(
-                                                            treatment.id
+                                                            service.id
                                                         )
                                                             ? "1px solid #9e2265"
                                                             : "1px solid #e0e0e0",
@@ -936,11 +1181,11 @@ export default function BookingPage() {
                                                         alignItems="flex-start"
                                                     >
                                                         <Box sx={{ flex: 1 }}>
-                                                            <Typography 
-                                                                variant="h6" 
-                                                                onClick={() => toggleGuestService(index, treatment.id)}
-                                                                sx={{ 
-                                                                    mb: 1, 
+                                                            <Typography
+                                                                variant="h6"
+                                                                onClick={() => toggleGuestService(index, service.id)}
+                                                                sx={{
+                                                                    mb: 1,
                                                                     fontFamily: "'Open Sans', sans-serif",
                                                                     cursor: "pointer",
                                                                     "&:hover": {
@@ -948,34 +1193,34 @@ export default function BookingPage() {
                                                                     },
                                                                 }}
                                                             >
-                                                                {treatment.name}
+                                                                {service.name}
                                                             </Typography>
                                                             <Typography
                                                                 variant="body2"
                                                                 color="text.secondary"
                                                                 sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}
                                                             >
-                                                                {treatment.description}
+                                                                {service.description}
                                                             </Typography>
                                                             <Stack direction="row" spacing={2}>
                                                                 <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
-                                                                    {treatment.duration} {t('booking.minutes')}
+                                                                    {service.durationMinutes} {t('booking.minutes')}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="body2"
                                                                     sx={{ fontWeight: 600, fontFamily: "'Open Sans', sans-serif", }}
                                                                 >
-                                                                    {treatment.price.toLocaleString()} ₫ ($
-                                                                    {treatment.priceUSD})
+                                                                    {service.price} ₫ ($
+                                                                    {Number(service.priceUSD || 0).toFixed(2)})
                                                                 </Typography>
                                                             </Stack>
                                                         </Box>
                                                         <Checkbox
                                                             checked={(guestServices[index] || []).includes(
-                                                                treatment.id
+                                                                service.id
                                                             )}
                                                             onChange={() =>
-                                                                toggleGuestService(index, treatment.id)
+                                                                toggleGuestService(index, service.id)
                                                             }
                                                             sx={{
                                                                 color: "#9e2265",
@@ -1424,7 +1669,6 @@ export default function BookingPage() {
                                 </Stack>
                             </Card>
 
-                            {/* Cancellation Policy */}
                             <Card sx={{ py: 3 }}>
                                 <Typography
                                     variant="h6"
@@ -1443,43 +1687,69 @@ export default function BookingPage() {
                                 </Stack>
                             </Card>
                             {/* Confirm Button */}
-                            <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-                                <Button
-                                    variant="contained"
-                                    onClick={handleSubmit}
-                                    endIcon={<ArrowForwardIosIcon sx={{ fontSize: 16 }} />}
-                                    disabled={!isBookingInfoComplete}
-                                    sx={{
-                                        fontFamily: "'Open Sans', sans-serif",
-                                        bgcolor: "#9e2265",
-                                        color: "white",
-                                        fontWeight: 600,
-                                        px: 15,
-                                        py: 2,
-                                        fontSize: "1rem",
-                                        borderRadius: 0,
-                                        textTransform: "uppercase",
-                                        "&:hover": {
-                                            bgcolor: "#d83b8a",
-                                        },
-                                    }}
-                                >
-                                    {t('confirm')}
-                                </Button>
-                            </Box>
-                            {bookingError && (
-                                <Typography
-                                    color="error"
-                                    align="center"
-                                    sx={{ mt: 1.5, fontFamily: "'Open Sans', sans-serif", }}
-                                >
-                                    {bookingError}
-                                </Typography>
-                            )}
+                            <Grid item xs={16} md={8}>
+                                <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleSubmit}
+                                        endIcon={<ArrowForwardIosIcon sx={{ fontSize: 16 }} />}
+                                        disabled={!isBookingInfoComplete || loadingServices || isCreatingCustomer}
+                                        sx={{
+                                            fontFamily: "'Open Sans', sans-serif",
+                                            bgcolor: "#9e2265",
+                                            color: "white",
+                                            fontWeight: 600,
+                                            px: 15,
+                                            py: 2,
+                                            fontSize: "1rem",
+                                            borderRadius: 0,
+                                            textTransform: "uppercase",
+                                            "&:hover": {
+                                                bgcolor: "#d83b8a",
+                                            },
+                                            "&:disabled": {
+                                                bgcolor: "#ccc",
+                                            }
+                                        }}
+                                    >
+                                        {isCreatingCustomer ? (
+                                            <>
+                                                <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
+                                                Creating...
+                                            </>
+                                        ) : (
+                                            t('confirm')
+                                        )}
+                                    </Button>
+                                </Box>
+                                {bookingError && (
+                                    <Typography
+                                        color="error"
+                                        align="center"
+                                        sx={{ mt: 1.5, fontFamily: "'Open Sans', sans-serif" }}
+                                    >
+                                        {bookingError}
+                                    </Typography>
+                                )}
+                            </Grid>
                         </Stack>
                     </Grid>
                 </Grid>
             </Box>
+            {/* <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar> */}
 
         </Box>
 

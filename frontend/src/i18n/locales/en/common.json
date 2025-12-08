@@ -607,8 +607,8 @@
   "done": "DONE",
   "prices": {
     "totalPrice": "Total price",
-    "discount": "Discount 10%",
-    "totalAfter": "Total after discount"
+    "tax": "Tax 8%",
+    "totalAfter": "Total after tax"
   }
   
 }

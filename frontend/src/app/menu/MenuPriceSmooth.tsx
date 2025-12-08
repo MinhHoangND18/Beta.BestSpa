@@ -17,21 +17,37 @@ import FormBooking from "@components/FormBooking";
 import { useRouter } from "next/navigation";
 import { useMediaQuery, useTheme } from "@mui/material";
 import NextLink from "next/link";
-import { log } from "console";
-
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  durationMinutes: number;
-  price: number;
-  priceUSD: number;
-  categoryId: number;
-}
-
+import {
+  getServices,
+  deleteService,
+  createService,
+  updateService,
+} from '@/lib/api/services';
+import { getActiveServiceCategories } from '@/lib/api/service-categories';
+import {
+  Service,
+  ServiceCategory,
+  ServiceStatus,
+  QueryServiceDto,
+  UpdateServiceDto,
+  CreateServiceDto,
+  PaginatedServices,
+} from '@/types';
+// interface ServiceFormData {
+//   name: string;
+//   categoryId: string;
+//   description: string;
+//   durationMinutes: string;
+//   price: string;
+//   discountPrice: string;
+//   imageUrl: string;
+//   isCombo: boolean;
+//   status: ServiceStatus;
+// }
 interface Services {
   [key: string]: Service[];
 }
+
 export default function SpaMenu() {
   const { t, i18n } = useTranslation("common");
   const [activeTab, setActiveTab] = useState("1");
@@ -59,18 +75,14 @@ export default function SpaMenu() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const timestamp = Date.now();
-        const response = await fetch(
-`http://localhost:3001/api/services/active?ts=${timestamp}`
-        );
-//?lang=${i18n.language}
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
-        const data: Service[] = result.data;
-
-        const groupedServices = data.reduce((acc, service) => {
+        setIsLoading(true);
+        const params: QueryServiceDto = {
+          status: 'active',
+          limit: 9999,
+        };
+        const paginatedData = await getServices(params);
+        const data: Service[] = paginatedData.data;
+        const groupedServices = data.reduce((acc: Services, service) => {
           if (service && service.categoryId != null) {
             const categoryId = service.categoryId.toString();
             if (!acc[categoryId]) {
@@ -297,7 +309,7 @@ export default function SpaMenu() {
               data-tab-id={tab.id}
               sx={{
                 display:
-                  services[tab.id] && services[tab.id].length > 0
+                  services[tab.id]?.length > 0
                     ? isMobile || activeTab === tab.id
                       ? "block"
                       : "none"
@@ -321,8 +333,7 @@ export default function SpaMenu() {
                 </Typography>
               )}
               <Grid container spacing={2}>
-                {services[tab.id] &&
-                  services[tab.id].map((service) => (
+                {(services[tab.id] || []).map((service) => (
                     <Grid item xs={12} key={service.id}>
                       <Paper
                         sx={{
@@ -382,7 +393,7 @@ export default function SpaMenu() {
                               {new Intl.NumberFormat("en-US", {
                                 style: "currency",
                                 currency: "USD",
-                              }).format(service.priceUSD)}
+                              }).format(service.priceUSD || 0)}
                               )
                             </strong>
                           </Typography>

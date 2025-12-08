@@ -1,0 +1,13 @@
+1:"$Sreact.fragment"
+2:I[64381,["/_next/static/chunks/6e9ac5b86215ad1c.js","/_next/static/chunks/7c01c02d314c172d.js"],"ViewportBoundary"]
+4:I[64381,["/_next/static/chunks/6e9ac5b86215ad1c.js","/_next/static/chunks/7c01c02d314c172d.js"],"MetadataBoundary"]
+5:"$Sreact.suspense"
+7:I[12843,["/_next/static/chunks/6e9ac5b86215ad1c.js","/_next/static/chunks/7c01c02d314c172d.js"],"IconMark"]
+:HL["/_next/static/chunks/40cba527bdbaa27c.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/cf514f5d0007dafa-s.p.417aa1a2.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css","style"]
+0:{"buildId":"U-Yhq5V3JzvXTQOJVQ_4o","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"thanks","paramType":null,"paramKey":"thanks","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"head":["$","$1","h",{"children":[null,["$","$L2",null,{"children":"$@3"}],["$","div",null,{"hidden":true,"children":["$","$L4",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":"$@6"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isHeadPartial":false,"staleTime":300}
+3:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+6:[["$","title","0",{"children":"Thank you for booking service at SEN SPA Da Nang!"}],["$","meta","1",{"name":"description","content":"We have received your reservation."}],["$","meta","2",{"name":"keywords","content":"Sen Spa,Spa Da Nang,Sen Spa Da Nang"}],["$","meta","3",{"name":"data-precedence","content":"next"}],["$","meta","4",{"property":"og:title","content":"Thank you for booking service at SEN SPA Da Nang!"}],["$","meta","5",{"property":"og:description","content":"We have received your reservation."}],["$","meta","6",{"property":"og:type","content":"website"}],["$","meta","7",{"name":"twitter:card","content":"summary"}],["$","meta","8",{"name":"twitter:title","content":"Thank you for booking service at SEN SPA Da Nang!"}],["$","meta","9",{"name":"twitter:description","content":"We have received your reservation."}],["$","link","10",{"rel":"icon","href":"/images/favicon.ico","type":"image/x-icon","sizes":"16x16"}],["$","$L7","11",{}]]
