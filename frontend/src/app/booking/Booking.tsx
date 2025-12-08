@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next';
 import { CreateBookingOrderDto } from "@/types/booking";
 import { ItemType } from "@/types/invoice-items";
 import { createBookingOrder } from "@/lib/api/bookings";
+import { getServices } from "@/lib/api/services";
 
 interface Treatment {
     id: number;
@@ -119,41 +120,38 @@ export default function BookingPage() {
         { icon: "/confirm.svg", label: t('steps.confirm'), active: false },
     ];
 
-    const treatments: Treatment[] = [
-        { id: 33, name: t('treatments.33.title'), description: t('treatments.33.description'), duration: 120, price: 750000, priceUSD: 27.78 },
-        { id: 25, name: t('treatments.25.title'), description: t('treatments.25.description'), duration: 60, price: 450000, priceUSD: 16.67 },
-        { id: 26, name: t('treatments.26.title'), description: t('treatments.26.description'), duration: 150, price: 1100000, priceUSD: 40.74 },
-        { id: 27, name: t('treatments.27.title'), description: t('treatments.27.description'), duration: 150, price: 1050000, priceUSD: 38.89 },
-        { id: 28, name: t('treatments.28.title'), description: t('treatments.28.description'), duration: 120, price: 1150000, priceUSD: 42.59 },
-        { id: 29, name: t('treatments.29.title'), description: t('treatments.29.description'), duration: 180, price: 1150000, priceUSD: 42.59 },
-        { id: 30, name: t('treatments.30.title'), description: t('treatments.30.description'), duration: 210, price: 1350000, priceUSD: 50.00 },
-        { id: 31, name: t('treatments.31.title'), description: t('treatments.31.description'), duration: 60, price: 520000, priceUSD: 19.26 },
-        { id: 32, name: t('treatments.32.title'), description: t('treatments.32.description'), duration: 120, price: 690000, priceUSD: 25.56 },
-        { id: 17, name: t('treatments.17.title'), description: t('treatments.17.description'), duration: 90, price: 620000, priceUSD: 22.96 },
-        { id: 24, name: t('treatments.24.title'), description: t('treatments.24.description'), duration: 30, price: 300000, priceUSD: 11.11 },
-        { id: 23, name: t('treatments.23.title'), description: t('treatments.23.description'), duration: 30, price: 300000, priceUSD: 11.11 },
-        { id: 22, name: t('treatments.22.title'), description: t('treatments.22.description'), duration: 90, price: 450000, priceUSD: 16.67 },
-        { id: 21, name: t('treatments.21.title'), description: t('treatments.21.description'), duration: 90, price: 450000, priceUSD: 16.67 },
-        { id: 20, name: t('treatments.20.title'), description: t('treatments.20.description'), duration: 60, price: 290000, priceUSD: 10.74 },
-        { id: 19, name: t('treatments.19.title'), description: t('treatments.19.description'), duration: 30, price: 300000, priceUSD: 11.11 },
-        { id: 18, name: t('treatments.18.title'), description: t('treatments.18.description'), duration: 120, price: 720000, priceUSD: 26.67 },
-        { id: 16, name: t('treatments.16.title'), description: t('treatments.16.description'), duration: 90, price: 580000, priceUSD: 21.48 },
-        { id: 15, name: t('treatments.15.title'), description: t('treatments.15.description'), duration: 75, price: 490000, priceUSD: 18.15 },
-        { id: 14, name: t('treatments.14.title'), description: t('treatments.14.description'), duration: 60, price: 420000, priceUSD: 15.56 },
-        { id: 13, name: t('treatments.13.title'), description: t('treatments.13.description'), duration: 90, price: 580000, priceUSD: 21.48 },
-        { id: 12, name: t('treatments.12.title'), description: t('treatments.12.description'), duration: 75, price: 490000, priceUSD: 18.15 },
-        { id: 11, name: t('treatments.11.title'), description: t('treatments.11.description'), duration: 90, price: 550000, priceUSD: 20.37 },
-        { id: 10, name: t('treatments.10.title'), description: t('treatments.10.description'), duration: 75, price: 490000, priceUSD: 18.15 },
-        { id: 1, name: t('treatments.1.title'), description: t('treatments.1.description'), duration: 30, price: 250000, priceUSD: 9.26 },
-        { id: 9, name: t('treatments.9.title'), description: t('treatments.9.description'), duration: 60, price: 420000, priceUSD: 15.56 },
-        { id: 8, name: t('treatments.8.title'), description: t('treatments.8.description'), duration: 90, price: 550000, priceUSD: 20.37 },
-        { id: 7, name: t('treatments.7.title'), description: t('treatments.7.description'), duration: 75, price: 480000, priceUSD: 17.78 },
-        { id: 6, name: t('treatments.6.title'), description: t('treatments.6.description'), duration: 60, price: 390000, priceUSD: 14.44 },
-        { id: 5, name: t('treatments.5.title'), description: t('treatments.5.description'), duration: 90, price: 550000, priceUSD: 20.37 },
-        { id: 4, name: t('treatments.4.title'), description: t('treatments.4.description'), duration: 75, price: 480000, priceUSD: 17.78 },
-        { id: 3, name: t('treatments.3.title'), description: t('treatments.3.description'), duration: 60, price: 390000, priceUSD: 14.44 },
-        { id: 2, name: t('treatments.2.title'), description: t('treatments.2.description'), duration: 45, price: 310000, priceUSD: 11.48 },
-    ];
+    const [treatments, setTreatments] = useState<Treatment[]>([]);
+    const [treatmentsLoading, setTreatmentsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                setTreatmentsLoading(true);
+                // Fetch all services by setting a high limit
+                const response = await getServices({ limit: 1000 });
+                const services = response.data.data;
+                
+                const mappedTreatments: Treatment[] = services.map(service => ({
+                    id: service.id,
+                    name: service.name,
+                    description: service.description || '',
+                    duration: service.durationMinutes,
+                    price: service.price,
+                    priceUSD: service.priceUSD || 0,
+                }));
+
+                setTreatments(mappedTreatments);
+            } catch (error) {
+                console.error("Failed to fetch treatments:", error);
+                // Optionally set an error state here
+            } finally {
+                setTreatmentsLoading(false);
+            }
+        };
+
+        fetchServices();
+    }, []);
+
     const [formData, setFormData] = useState({
         fullName: "",
         phone: "",
@@ -976,77 +974,82 @@ export default function BookingPage() {
                                             </Stack>
                                         </DialogTitle>
                                         <DialogContent>
-                                            {treatments.map((treatment) => (
-                                                <Paper
-                                                    key={treatment.id}
-                                                    sx={{
-                                                        p: 1,
-                                                        mb: 2,
-                                                        border: (guestServices[index] || []).includes(
-                                                            treatment.id
-                                                        )
-                                                            ? "1px solid #9e2265"
-                                                            : "1px solid #e0e0e0",
-                                                    }}
-                                                >
-                                                    <Stack
-                                                        direction="row"
-                                                        justifyContent="space-between"
-                                                        alignItems="flex-start"
+                                            {treatmentsLoading ? (
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                                                    <CircularProgress />
+                                                </Box>
+                                            ) : (
+                                                treatments.map((treatment) => (
+                                                    <Paper
+                                                        key={treatment.id}
+                                                        sx={{
+                                                            p: 1,
+                                                            mb: 2,
+                                                            border: (guestServices[index] || []).includes(
+                                                                treatment.id
+                                                            )
+                                                                ? "1px solid #9e2265"
+                                                                : "1px solid #e0e0e0",
+                                                        }}
                                                     >
-                                                        <Box sx={{ flex: 1 }}>
-                                                            <Typography 
-                                                                variant="h6" 
-                                                                onClick={() => toggleGuestService(index, treatment.id)}
-                                                                sx={{ 
-                                                                    mb: 1, 
-                                                                    fontFamily: "'Open Sans', sans-serif",
-                                                                    cursor: "pointer",
-                                                                    "&:hover": {
-                                                                        color: "#9e2265",
-                                                                    },
-                                                                }}
-                                                            >
-                                                                {treatment.name}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body2"
-                                                                color="text.secondary"
-                                                                sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}
-                                                            >
-                                                                {treatment.description}
-                                                            </Typography>
-                                                            <Stack direction="row" spacing={2}>
-                                                                <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
-                                                                    {treatment.duration} {t('booking.minutes')}
+                                                        <Stack
+                                                            direction="row"
+                                                            justifyContent="space-between"
+                                                            alignItems="flex-start"
+                                                        >
+                                                            <Box sx={{ flex: 1 }}>
+                                                                <Typography 
+                                                                    variant="h6" 
+                                                                    onClick={() => toggleGuestService(index, treatment.id)}
+                                                                    sx={{ 
+                                                                        mb: 1, 
+                                                                        fontFamily: "'Open Sans', sans-serif",
+                                                                        cursor: "pointer",
+                                                                        "&:hover": {
+                                                                            color: "#9e2265",
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    {treatment.name}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="body2"
-                                                                    sx={{ fontWeight: 600, fontFamily: "'Open Sans', sans-serif", }}
+                                                                    color="text.secondary"
+                                                                    sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}
                                                                 >
-                                                                    {treatment.price.toLocaleString()} ₫ ($
-                                                                    {treatment.priceUSD})
+                                                                    {treatment.description}
                                                                 </Typography>
-                                                            </Stack>
-                                                        </Box>
-                                                        <Checkbox
-                                                            checked={(guestServices[index] || []).includes(
-                                                                treatment.id
-                                                            )}
-                                                            onChange={() =>
-                                                                toggleGuestService(index, treatment.id)
-                                                            }
-                                                            sx={{
-                                                                color: "#9e2265",
-                                                                "&.Mui-checked": {
+                                                                <Stack direction="row" spacing={2}>
+                                                                    <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
+                                                                        {treatment.duration} {t('booking.minutes')}
+                                                                    </Typography>
+                                                                    <Typography
+                                                                        variant="body2"
+                                                                        sx={{ fontWeight: 600, fontFamily: "'Open Sans', sans-serif", }}
+                                                                    >
+                                                                        {treatment.price.toLocaleString()} ₫ ($
+                                                                        {treatment.priceUSD})
+                                                                    </Typography>
+                                                                </Stack>
+                                                            </Box>
+                                                            <Checkbox
+                                                                checked={(guestServices[index] || []).includes(
+                                                                    treatment.id
+                                                                )}
+                                                                onChange={() =>
+                                                                    toggleGuestService(index, treatment.id)
+                                                                }
+                                                                sx={{
                                                                     color: "#9e2265",
-                                                                },
-                                                            }}
-                                                        />
-                                                    </Stack>
-                                                </Paper>
-                                            ))}
-
+                                                                    "&.Mui-checked": {
+                                                                        color: "#9e2265",
+                                                                    },
+                                                                }}
+                                                            />
+                                                        </Stack>
+                                                    </Paper>
+                                                ))
+                                            )}
                                         </DialogContent>
                                         <Button
                                             variant="contained"
