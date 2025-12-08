@@ -12,29 +12,29 @@ import {
   Paper,
   Link,
   Stack,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 import FormBooking from "@components/FormBooking";
-import { useRouter } from "next/navigation";
 import { useMediaQuery, useTheme } from "@mui/material";
 import NextLink from "next/link";
-import { log } from "console";
+import { useQuery } from "@tanstack/react-query";
+import { getActiveServiceCategories } from "@/lib/api/service-categories";
+import { getServices } from "@/lib/api/services";
+import {
+  Service,
+  ServiceCategory,
+  ServiceStatus,
+  PaginatedServices,
+} from "@/types";
 
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  durationMinutes: number;
-  price: number;
-  priceUSD: number;
-  categoryId: number;
-}
-
-interface Services {
+interface ServicesGroup {
   [key: string]: Service[];
 }
+
 export default function SpaMenu() {
   const { t, i18n } = useTranslation("common");
-  const [activeTab, setActiveTab] = useState("1");
+  const [activeTab, setActiveTab] = useState<string | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedTreatment, setSelectedTreatment] = useState<string>("");
   const menuTopRef = useRef<HTMLDivElement | null>(null);
@@ -42,54 +42,49 @@ export default function SpaMenu() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isScrolling = useRef(false);
-  const [services, setServices] = useState<Services>({});
-  const [isLoading, setIsLoading] = useState(true);
 
-  const tabs = useMemo(
-    () => [
-      { id: "1", name: t("menu.tabs.bodyMassage") },
-      { id: "2", name: t("menu.tabs.footMassage") },
-      { id: "3", name: t("menu.tabs.facialTreatment") },
-      { id: "4", name: t("menu.tabs.package") },
-      { id: "5", name: t("menu.tabs.combo") },
-    ],
-    [i18n.language]
-  );
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery<
+    ServiceCategory[]
+  >({
+    queryKey: ["activeServiceCategories", i18n.language],
+    queryFn: () => getActiveServiceCategories(),
+    select: (data: any) => data.data,
+  });
+
+  const { data: servicesData = [], isLoading: isLoadingServices } = useQuery({
+    queryKey: ["services", { status: "active" }, i18n.language],
+    queryFn: () =>
+      getServices({ limit: 1000, status: "active" as ServiceStatus }),
+    select: (data: PaginatedServices) => data.data.data, 
+  });
+
+  const isLoading = isLoadingCategories || isLoadingServices;
+
+  const tabs = useMemo(() => {
+    return categories.map((category) => ({
+      id: category.id.toString(),
+      name: category.name,
+    }));
+  }, [categories]);
+
+  const services = useMemo(() => {
+    return servicesData.reduce((acc: ServicesGroup, service: Service) => {
+      if (service && service.categoryId != null) {
+        const categoryId = service.categoryId.toString();
+        if (!acc[categoryId]) {
+          acc[categoryId] = [];
+        }
+        acc[categoryId].push(service);
+      }
+      return acc;
+    }, {} as ServicesGroup);
+  }, [servicesData]);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const timestamp = Date.now();
-        const response = await fetch(
-`http://localhost:3001/api/services/active?ts=${timestamp}`
-        );
-//?lang=${i18n.language}
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
-        const data: Service[] = result.data;
-
-        const groupedServices = data.reduce((acc, service) => {
-          if (service && service.categoryId != null) {
-            const categoryId = service.categoryId.toString();
-            if (!acc[categoryId]) {
-              acc[categoryId] = [];
-            }
-            acc[categoryId].push(service);
-          }
-          return acc;
-        }, {} as Services);
-        setServices(groupedServices);
-      } catch (error) {
-        console.error("Failed to fetch services:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchServices();
-  }, [i18n.language]);
+    if (!activeTab && tabs.length > 0) {
+      setActiveTab(tabs[0].id);
+    }
+  }, [tabs, activeTab]);
 
   const handleBookNow = (treatmentName: string) => {
     setSelectedTreatment(treatmentName);
@@ -190,315 +185,316 @@ export default function SpaMenu() {
     }
   }, [activeTab, isMobile]);
 
-  if (isLoading) {
-    return (
-      <Container sx={{ py: 10, textAlign: "center" }}>
-        <Typography variant="h5">{t("menu.loading")}</Typography>
-      </Container>
-    );
-  }
-
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Box
-        ref={menuTopRef}
-        sx={{
-          width: "100%",
-          position: "relative",
-          top: 0,
-          left: 0,
-          bgcolor: "#9e2265",
-          py: 4,
-          textAlign: "center",
-          overflowX: "hidden",
-        }}
+    <>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isLoading}
       >
-        <Typography
-          variant="h3"
-          sx={{
-            mb: 0,
-            fontFamily: "'MTD Valky', serif",
-            fontWeight: 500,
-            letterSpacing: "0.05em",
-            fontSize: { xs: "1.5rem", md: "2.5rem" },
-            textTransform: "uppercase",
-            color: "#ffffff",
-            textShadow: "0 4px 16px rgba(0,0,0,0.4)",
-          }}
-        >
-          {t("menu.title")}
-        </Typography>
-      </Box>
-
-      <Box
-        sx={{
-          px: { xs: 2, md: 16 },
-          width: "100%",
-          textAlign: "center",
-          justifyContent: "center",
-        }}
-      >
-        {/* Sticky Tabs */}
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Box sx={{ flexGrow: 1 }}>
         <Box
+          ref={menuTopRef}
           sx={{
-            maxWidth: "1210px",
-            position: "sticky",
-            top: 0,
-            zIndex: 1000,
-            backgroundColor: "#fff",
-            display: "flex",
-            justifyContent: "center",
             width: "100%",
-            mb: 4,
-            mx: "auto",
-            borderBottom: "1px solid #c1c1c1",
+            position: "relative",
+            top: 0,
+            left: 0,
+            bgcolor: "#9e2265",
+            py: 4,
+            textAlign: "center",
+            overflowX: "hidden",
           }}
         >
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            textColor="inherit"
-            variant="scrollable"
-            scrollButtons={false}
-            allowScrollButtonsMobile
-            TabIndicatorProps={{ style: { backgroundColor: "#9e2265" } }}
+          <Typography
+            variant="h3"
             sx={{
-              "& .MuiTab-root": {
-                fontFamily: "'Open Sans', sans-serif",
-                fontWeight: 600,
-                color: "black",
-                minHeight: { xs: 56, md: 72 },
-              },
-              "& .Mui-selected": {
-                color: "#9e2265",
-              },
+              mb: 0,
+              fontFamily: "'MTD Valky', serif",
+              fontWeight: 500,
+              letterSpacing: "0.05em",
+              fontSize: { xs: "1.5rem", md: "2.5rem" },
+              textTransform: "uppercase",
+              color: "#ffffff",
+              textShadow: "0 4px 16px rgba(0,0,0,0.4)",
             }}
           >
-            {tabs.map((tab) => (
-              <Tab key={tab.id} label={tab.name} value={tab.id} />
-            ))}
-          </Tabs>
+            {t("menu.title")}
+          </Typography>
         </Box>
 
         <Box
           sx={{
-            maxWidth: "1210px",
-            mx: "auto",
+            px: { xs: 2, md: 16 },
             width: "100%",
+            textAlign: "center",
+            justifyContent: "center",
           }}
         >
-          {/* Services List */}
-          {tabs.map((tab) => (
-            <Box
-              key={tab.id}
-              ref={(el) => {
-                if (el) sectionRefs.current[tab.id] = el as HTMLDivElement;
-              }}
-              data-tab-id={tab.id}
+          {/* Sticky Tabs */}
+          <Box
+            sx={{
+              maxWidth: "1210px",
+              position: "sticky",
+              top: 0,
+              zIndex: 1000,
+              backgroundColor: "#fff",
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+              mb: 4,
+              mx: "auto",
+              borderBottom: "1px solid #c1c1c1",
+            }}
+          >
+            {tabs.length > 0 && activeTab && (
+              <Tabs
+                value={activeTab}
+                onChange={handleTabChange}
+                textColor="inherit"
+                variant="scrollable"
+                scrollButtons={false}
+                allowScrollButtonsMobile
+                TabIndicatorProps={{ style: { backgroundColor: "#9e2265" } }}
+                sx={{
+                  "& .MuiTab-root": {
+                    fontFamily: "'Open Sans', sans-serif",
+                    fontWeight: 600,
+                    color: "black",
+                    minHeight: { xs: 56, md: 72 },
+                  },
+                  "& .Mui-selected": {
+                    color: "#9e2265",
+                  },
+                }}
+              >
+                {tabs.map((tab) => (
+                  <Tab key={tab.id} label={tab.name} value={tab.id} />
+                ))}
+              </Tabs>
+            )}
+          </Box>
+
+          <Box
+            sx={{
+              maxWidth: "1210px",
+              mx: "auto",
+              width: "100%",
+            }}
+          >
+            {/* Services List */}
+            {tabs.map((tab) => (
+              <Box
+                key={tab.id}
+                ref={(el) => {
+                  if (el) sectionRefs.current[tab.id] = el as HTMLDivElement;
+                }}
+                data-tab-id={tab.id}
+                sx={{
+                  display:
+                    services[tab.id] && services[tab.id].length > 0
+                      ? isMobile || activeTab === tab.id
+                        ? "block"
+                        : "none"
+                      : "none",
+                  mb: isMobile ? 4 : 0,
+                }}
+              >
+                {isMobile && (
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontFamily: "'Open Sans', sans-serif",
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      mb: 3,
+                      color: "#9e2265",
+                      textAlign: "left",
+                    }}
+                  >
+                    {tab.name}
+                  </Typography>
+                )}
+                <Grid container spacing={2}>
+                  {services[tab.id] &&
+                    services[tab.id].map((service: Service) => (
+                      <Grid item xs={12} key={service.id}>
+                        <Paper
+                          sx={{
+                            p: { xs: 2, md: 4 },
+                            display: "flex",
+                            flexDirection: { xs: "column", sm: "row" },
+                            justifyContent: "space-between",
+                            alignItems: { xs: "flex-start", sm: "center" },
+                            gap: 2,
+                            height: "100%",
+                            borderBottom: "1px solid #d0ceceff",
+                            boxShadow: "none",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              flex: 1,
+                              textAlign: "left",
+                            }}
+                          >
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                fontWeight: 600,
+                                fontFamily: "'Open Sans', sans-serif",
+                                fontSize: "20px",
+                              }}
+                            >
+                              {service.name}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{
+                                mt: 1,
+                                fontFamily: "'Open Sans', sans-serif",
+                                fontSize: "14px",
+                              }}
+                            >
+                              {service.description}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                mt: 1,
+                                fontFamily: "'Open Sans', sans-serif",
+                                fontSize: "14px",
+                              }}
+                            >
+                              {service.durationMinutes} minutes &bull; {""}
+                              <strong>
+                                {new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                }).format(service.price)}{" "}
+                                (
+                                {new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "USD",
+                                }).format(service.priceUSD as number)}
+                                )
+                              </strong>
+                            </Typography>
+                          </Box>
+                          <Button
+                            variant="contained"
+                            onClick={() => handleBookNow(t(`${service.name}`))}
+                            sx={{
+                              fontFamily: "'Open Sans', sans-serif",
+                              fontSize: "15px",
+                              borderRadius: 0,
+                              background: "#9e2265",
+                              width: { xs: "100%", sm: "150px" },
+                              height: "50px",
+                              fontWeight: 600,
+                              "&:hover": {
+                                background: "#7d1a50",
+                              },
+                            }}
+                          >
+                            {t("booking.bookNow")}
+                          </Button>
+                        </Paper>
+                      </Grid>
+                    ))}
+                </Grid>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+        <FormBooking
+          open={showBookingModal}
+          onClose={() => setShowBookingModal(false)}
+          selectedTreatment={selectedTreatment}
+        />
+
+        <Box
+          sx={{
+            py: 4,
+            px: { xs: 2, md: 16 },
+            width: "100%",
+            textAlign: "center",
+            justifyContent: "center",
+            overflowX: "hidden",
+          }}
+        >
+          {/* Note section */}
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 1,
+              color: "text.primary",
+              fontFamily: "'Open Sans', sans-serif",
+              fontSize: "14px",
+            }}
+          >
+            <strong>{t("menu.noteLabel")}</strong> {t("menu.note")}{" "}
+            <Link
+              component={NextLink}
+              href="/contacts"
+              sx={{ color: "#9e2265", textDecoration: "none", fontWeight: 500 }}
+            >
+              {t("menu.contactUs")}
+            </Link>
+            . {t("menu.noteEnd")}
+          </Typography>
+
+          {/* Description */}
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 4,
+              color: "text.primary",
+              maxWidth: 800,
+              mx: "auto",
+              fontFamily: "'Open Sans', sans-serif",
+              fontSize: "14px",
+            }}
+          >
+            {t("menu.description")}{" "}
+            <Link
+              component={NextLink}
+              href="/featured-products"
+              sx={{ color: "#9e2265", textDecoration: "none", fontWeight: 500 }}
+            >
+              {t("menu.monthlyFeaturedProducts")}
+            </Link>
+            . {t("menu.descriptionEnd")}
+          </Typography>
+
+          {/* Download button */}
+          <Stack alignItems="center">
+            <Button
+              component="a"
+              href="/pdf/Menu_SenSpa_Danang_2025.pdf"
+              download="Menu_SenSpa_Danang_2025.pdf"
+              variant="contained"
               sx={{
-                display:
-                  services[tab.id] && services[tab.id].length > 0
-                    ? isMobile || activeTab === tab.id
-                      ? "block"
-                      : "none"
-                    : "none",
-                mb: isMobile ? 4 : 0,
+                fontFamily: "'Open Sans', sans-serif",
+                fontSize: "18px",
+                bgcolor: "#9e2265",
+                color: "white",
+                textTransform: "uppercase",
+                px: 6,
+                py: 1.5,
+                fontWeight: 600,
+                borderRadius: 0,
+                "&:hover": {
+                  bgcolor: "#7b1b52",
+                },
               }}
             >
-              {isMobile && (
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontFamily: "'Open Sans', sans-serif",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    mb: 3,
-                    color: "#9e2265",
-                    textAlign: "left",
-                  }}
-                >
-                  {tab.name}
-                </Typography>
-              )}
-              <Grid container spacing={2}>
-                {services[tab.id] &&
-                  services[tab.id].map((service) => (
-                    <Grid item xs={12} key={service.id}>
-                      <Paper
-                        sx={{
-                          p: { xs: 2, md: 4 },
-                          display: "flex",
-                          flexDirection: { xs: "column", sm: "row" },
-                          justifyContent: "space-between",
-                          alignItems: { xs: "flex-start", sm: "center" },
-                          gap: 2,
-                          height: "100%",
-                          borderBottom: "1px solid #d0ceceff",
-                          boxShadow: "none",
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            flex: 1,
-                            textAlign: "left",
-                          }}
-                        >
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              fontWeight: 600,
-                              fontFamily: "'Open Sans', sans-serif",
-                              fontSize: "20px",
-                            }}
-                          >
-                            {service.name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                              mt: 1,
-                              fontFamily: "'Open Sans', sans-serif",
-                              fontSize: "14px",
-                            }}
-                          >
-                            {service.description}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              mt: 1,
-                              fontFamily: "'Open Sans', sans-serif",
-                              fontSize: "14px",
-                            }}
-                          >
-                            {service.durationMinutes}
-                            &bull;{" "}
-                            <strong>
-                              {new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(service.price)}{" "}
-                              (
-                              {new Intl.NumberFormat("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                              }).format(service.priceUSD)}
-                              )
-                            </strong>
-                          </Typography>
-                        </Box>
-                        <Button
-                          variant="contained"
-                          onClick={() => handleBookNow(t(`services.${service.id}.name`))}
-                          sx={{
-                            fontFamily: "'Open Sans', sans-serif",
-                            fontSize: "15px",
-                            borderRadius: 0,
-                            background: "#9e2265",
-                            width: { xs: "100%", sm: "150px" },
-                            height: "50px",
-                            fontWeight: 600,
-                            "&:hover": {
-                              background: "#7d1a50",
-                            },
-                          }}
-                        >
-                          {t("booking.bookNow")}
-                        </Button>
-                      </Paper>
-                    </Grid>
-                  ))}
-              </Grid>
-            </Box>
-          ))}
+              {t("menu.downloadPdfMenu")}
+            </Button>
+          </Stack>
         </Box>
       </Box>
-      <FormBooking
-        open={showBookingModal}
-        onClose={() => setShowBookingModal(false)}
-        selectedTreatment={selectedTreatment}
-      />
-
-      <Box
-        sx={{
-          py: 4,
-          px: { xs: 2, md: 16 },
-          width: "100%",
-          textAlign: "center",
-          justifyContent: "center",
-          overflowX: "hidden",
-        }}
-      >
-        {/* Note section */}
-        <Typography
-          variant="body1"
-          sx={{
-            mb: 1,
-            color: "text.primary",
-            fontFamily: "'Open Sans', sans-serif",
-            fontSize: "14px",
-          }}
-        >
-          <strong>{t("menu.noteLabel")}</strong> {t("menu.note")}{" "}
-          <Link
-            component={NextLink}
-            href="/contacts"
-            sx={{ color: "#9e2265", textDecoration: "none", fontWeight: 500 }}
-          >
-            {t("menu.contactUs")}
-          </Link>
-          . {t("menu.noteEnd")}
-        </Typography>
-
-        {/* Description */}
-        <Typography
-          variant="body1"
-          sx={{
-            mb: 4,
-            color: "text.primary",
-            maxWidth: 800,
-            mx: "auto",
-            fontFamily: "'Open Sans', sans-serif",
-            fontSize: "14px",
-          }}
-        >
-          {t("menu.description")}{" "}
-          <Link
-            component={NextLink}
-            href="/featured-products"
-            sx={{ color: "#9e2265", textDecoration: "none", fontWeight: 500 }}
-          >
-            {t("menu.monthlyFeaturedProducts")}
-          </Link>
-          . {t("menu.descriptionEnd")}
-        </Typography>
-
-        {/* Download button */}
-        <Stack alignItems="center">
-          <Button
-            component="a"
-            href="/pdf/Menu_SenSpa_Danang_2025.pdf"
-            download="Menu_SenSpa_Danang_2025.pdf"
-            variant="contained"
-            sx={{
-              fontFamily: "'Open Sans', sans-serif",
-              fontSize: "18px",
-              bgcolor: "#9e2265",
-              color: "white",
-              textTransform: "uppercase",
-              px: 6,
-              py: 1.5,
-              fontWeight: 600,
-              borderRadius: 0,
-              "&:hover": {
-                bgcolor: "#7b1b52",
-              },
-            }}
-          >
-            {t("menu.downloadPdfMenu")}
-          </Button>
-        </Stack>
-      </Box>
-    </Box>
+    </>
   );
 }

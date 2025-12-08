@@ -1,11 +1,14 @@
-import type { Metadata } from "next";
+'use client';
+//import type { Metadata } from "next";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Open_Sans, Geist, Geist_Mono } from "next/font/google";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 // import theme from "@/app/theme/theme";
 import I18nProvider from "@/components/I18nProvider";
+const queryClient = new QueryClient();
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -20,10 +23,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "My Multi-Page Next.js App",
-  description: "Example with App Router and shared layout",
-};
+// export const metadata: Metadata = {
+//   title: "My Multi-Page Next.js App",
+//   description: "Example with App Router and shared layout",
+// };
 
 export default function RootLayout({
   children,
@@ -45,14 +48,16 @@ export default function RootLayout({
       <body
         className={`${openSans.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <ThemeProvider theme={theme}> */}
+        <QueryClientProvider client={queryClient}>
+          {/* <ThemeProvider theme={theme}> */}
           <I18nProvider>
             <CssBaseline />
             <Header />
             <main>{children}</main>
             <Footer />
           </I18nProvider>
-        {/* </ThemeProvider> */}
+          {/* </ThemeProvider> */}
+        </QueryClientProvider>
       </body>
     </html>
   );

@@ -1,49 +1,49 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PermissionsModule } from './permissions/permissions.module';
-import { RolePermissionsModule } from './role_permission/role-permission.module';
-import { UsersModule } from './users/users.module';
-import { StoresModule } from './stores/stores.module';
-import { StaffModule } from './staff/staff.module';
-import { CustomersModule } from './customers/customers.module';
-import { CustomerCareHistoryModule } from './customer_care_history/customer_care_history.module';
-import { ServiceCategoriesModule } from './service_categories/service_categories.module';
-import { ServicesModule } from './services/services.module';
-import { BookingsModule } from './booking/bookings.module';
-import { InvoicesModule } from './invoices/invoices.module';
-import { InvoiceItemsModule } from './invoice_items/invoice_items.module';
-import { PaymentsModule } from './payments/payments.module';
-import { PromotionsModule } from './promotions/promotions.module';
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { databaseConfig } from './config/database.config';
+import { InvoiceItemsModule } from './modules/invoice_items/invoice_items.module';
+
+// Modules
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
+import { StaffModule } from './modules/staff/staff.module';
+import { StoresModule } from './modules/stores/stores.module';
+import { CustomersModule } from './modules/customers/customers.module';
+import { ServicesModule } from './modules/services/services.module';
+import { BookingsModule } from './modules/bookings/bookings.module';
+import { InvoicesModule } from './modules/invoices/invoices.module';
+import { ServiceCategoriesModule } from './modules/service_categories/service_categories.module';
+import { ProductsModule } from './modules/products/products.module';
+//import { PaymentsModule } from './modules/payments/payments.module';
+//import { PromotionsModule } from './modules/promotions/promotions.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql', 
-      host: process.env.DB_HOST || 'localhost',
-      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
-      username: process.env.DB_USERNAME || 'root',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_DATABASE || 'spa',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: process.env.NODE_ENV !== 'production', 
-      logging: process.env.NODE_ENV !== 'production',
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
     }),
-    
-    PermissionsModule,
-    RolePermissionsModule,
+    TypeOrmModule.forRoot(databaseConfig),
+    AuthModule,
     UsersModule,
-    StoresModule,
+    PermissionsModule,
     StaffModule,
+    StoresModule,
     CustomersModule,
-    CustomerCareHistoryModule,
-    ServiceCategoriesModule,
     ServicesModule,
     BookingsModule,
     InvoicesModule,
     InvoiceItemsModule,
-    PaymentsModule,
-    PromotionsModule,
+    ServiceCategoriesModule,
+    ProductsModule,
+    //PaymentsModule,
+    //PromotionsModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
