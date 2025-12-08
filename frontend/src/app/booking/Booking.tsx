@@ -30,6 +30,7 @@ import {
     Portal,
     Popper,
     ClickAwayListener,
+    CircularProgress,
 } from "@mui/material";
 import {
     Close,
@@ -42,6 +43,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { allCountries } from "country-telephone-data";
 import { useTranslation } from 'react-i18next';
+import { CreateBookingOrderDto } from "@/types/booking";
+import { ItemType } from "@/types/invoice-items";
+import { createBookingOrder } from "@/lib/api/bookings";
 
 interface Treatment {
     id: number;
@@ -181,6 +185,7 @@ export default function BookingPage() {
         selectedService: "",
     });
     const [bookingError, setBookingError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const isBookingInfoComplete = useMemo(() => {
         return Boolean(bookingData.spa && bookingData.date && bookingData.time && bookingData.people);
@@ -468,7 +473,7 @@ export default function BookingPage() {
         setErrors(newErrors);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!isBookingInfoComplete) {
             setBookingError(t('booking.completeReservationDetails'));
@@ -476,12 +481,66 @@ export default function BookingPage() {
             return;
         }
         setBookingError(null);
-        if (validateForm()) {
-            console.log("Form is valid:", formData);
-            router.push("/thanks");
-        } else {
+    
+        if (!validateForm()) {
             console.log("Form has errors");
             scrollToContactInfo();
+            return;
+        }
+    
+        setIsLoading(true);
+    
+        // Assume storeId is 1 for now, as it's not in the component's state
+        const storeId = 1;
+    
+        const invoiceItems = guestServices.flatMap((serviceIds) =>
+            serviceIds.map((serviceId) => {
+                const treatment = treatments.find((t) => t.id === serviceId);
+                return {
+                    itemId: serviceId,
+                    itemType: ItemType.SERVICE, // Assuming all are services
+                    quantity: 1, // Assuming quantity is always 1 per service selection
+                    unitPrice: treatment?.price || 0,
+                    discount: 0, // No per-item discount in UI, handle at invoice level
+                    totalPrice: treatment?.price || 0,
+                    itemName: treatment?.name,
+                };
+            })
+        );
+    
+        const orderPayload: CreateBookingOrderDto = {
+            customer: {
+                fullName: formData.fullName,
+                phone: formData.phone,
+                email: formData.email,
+            },
+            booking: {
+                storeId: storeId, // Hardcoded for now
+                bookingDate: bookingData.date,
+                startTime: bookingData.time,
+                notes: formData.content,
+            },
+            invoice: {
+                storeId: storeId, // Hardcoded for now
+                subtotal: totalVND,
+                discountAmount: discountVND,
+                taxAmount: 0, // No tax in UI
+                totalAmount: finalVND,
+                notes: formData.content,
+                items: invoiceItems,
+            },
+        };
+    
+        try {
+            await createBookingOrder(orderPayload);
+            // Clear data from local storage after successful booking
+            localStorage.removeItem("bookingData");
+            router.push("/thanks");
+        } catch (error) {
+            console.error("Failed to create booking:", error);
+            setBookingError("Failed to create booking. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -1447,8 +1506,7 @@ export default function BookingPage() {
                                 <Button
                                     variant="contained"
                                     onClick={handleSubmit}
-                                    endIcon={<ArrowForwardIosIcon sx={{ fontSize: 16 }} />}
-                                    disabled={!isBookingInfoComplete}
+                                    disabled={!isBookingInfoComplete || isLoading}
                                     sx={{
                                         fontFamily: "'Open Sans', sans-serif",
                                         bgcolor: "#9e2265",
@@ -1464,7 +1522,7 @@ export default function BookingPage() {
                                         },
                                     }}
                                 >
-                                    {t('confirm')}
+                                    {isLoading ? <CircularProgress size={24} color="inherit" /> : t('confirm')}
                                 </Button>
                             </Box>
                             {bookingError && (

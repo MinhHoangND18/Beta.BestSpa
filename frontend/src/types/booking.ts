@@ -1,4 +1,5 @@
 // types/booking.ts
+import { ItemType } from './invoice-items';
 
 export enum BookingStatus {
     PENDING = 'pending',
@@ -73,3 +74,42 @@ export interface BookingFilters {
     bookingDate?: string;
     status?: BookingStatus;
 }
+
+// --- New DTOs for Creating a Booking Order ---
+
+export interface CustomerForBookingDto {
+    fullName: string;
+    phone: string;
+    email?: string;
+  }
+  
+export interface InvoiceItemForBookingDto {
+    itemId: number;
+    itemType: ItemType;
+    quantity: number;
+    unitPrice: number;
+    discount: number;
+    totalPrice: number;
+    itemName?: string;
+    staffId?: number;
+}
+
+export interface CreateBookingOrderDto {
+    customer: CustomerForBookingDto;
+    booking: {
+      storeId: number;
+      bookingDate: string;
+      startTime: string;
+      notes?: string;
+    };
+    invoice: {
+      storeId: number;
+      subtotal: number;
+      discountAmount: number;
+      taxAmount: number;
+      totalAmount: number;
+      notes?: string;
+      items: InvoiceItemForBookingDto[];
+    };
+}
+  
