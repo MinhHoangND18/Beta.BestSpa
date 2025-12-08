@@ -845,7 +845,7 @@ export default function BookingPage() {
                                                     </Typography>
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                                         {totalVND.toLocaleString()} ₫ ($
-                                                        {totalUSD.toFixed(2)})
+                                                        {Number(totalUSD || 0).toFixed(2)})
                                                     </Typography>
                                                 </Stack>
                                                 <Stack
