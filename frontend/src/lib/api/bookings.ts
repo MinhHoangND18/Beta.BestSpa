@@ -4,25 +4,16 @@ import {
   UpdateBookingPayload,
   Booking,
   BookingResponse,
-  BookingFilters
+  BookingFilters,
+  CreateBookingOrderDto
 } from '@/types/booking';
 import api from './axios';
 
-interface ApiResponseWrapper {
-    success: boolean;
-    data: BookingResponse; 
-}
-interface SingleResourceApiResponse<T> {
-    success: boolean;
-    data: T; // Chứa object Booking đã được tạo
-    message?: string;
-}
-
-export const getBookings = async (filters: BookingFilters): Promise<BookingResponse> => {
-  const response = await api.get<ApiResponseWrapper>('/bookings', { params: filters });
-
-  return response.data.data; 
-}
+// Lấy danh sách bookings (có phân trang, filter)
+export const getBookings = async (filters: BookingFilters) => {
+  const response = await api.get('/bookings', { params: filters });
+  return response.data;
+};
 
 export const getBooking = async (id: number) => {
   const { data } = await api.get(`${API_ENDPOINTS.BOOKINGS}/${id}`);
@@ -30,9 +21,14 @@ export const getBooking = async (id: number) => {
 };
 
 
-export const createBooking = async (booking: CreateBookingPayload): Promise<SingleResourceApiResponse<Booking>> => {
-  const { data } = await api.post<SingleResourceApiResponse<Booking>>(API_ENDPOINTS.BOOKINGS, booking);
+export const createBooking = async (booking: CreateBookingPayload) => {
+  const { data } = await api.post(API_ENDPOINTS.BOOKINGS, booking);
   return data;
+};
+
+export const createBookingOrder = async (order: CreateBookingOrderDto) => {
+    const { data } = await api.post(API_ENDPOINTS.BOOKING_ORDER, order);
+    return data;
 };
 
 export const updateBooking = async (id: number, booking: UpdateBookingPayload) => {

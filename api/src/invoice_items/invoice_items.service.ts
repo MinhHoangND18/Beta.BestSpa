@@ -96,7 +96,7 @@ export class InvoiceItemsService {
     return await this.invoiceItemRepository.find({
       where: { invoiceId },
       relations: ['invoice', 'staff'],
-      order: { id: 'ASC' }
+      order: { id: 'DESC' }
     });
   }
 

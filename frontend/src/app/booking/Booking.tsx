@@ -31,8 +31,6 @@ import {
     Popper,
     ClickAwayListener,
     CircularProgress,
-    Alert,
-    Snackbar,
 } from "@mui/material";
 import {
     Close,
@@ -45,38 +43,19 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { allCountries } from "country-telephone-data";
 import { useTranslation } from 'react-i18next';
-import { createCustomer } from '@/lib/api/customers';
-import {
-    CreateCustomerDto,
-    CustomerType,
-    CustomerStatus,
-    Gender
-} from '@/types/customer';
+import { CreateBookingOrderDto, InvoiceItemForBookingDto } from "@/types/booking";
+import { ItemType } from "@/types/invoice-item";
+import { createBookingOrder } from "@/lib/api/bookings";
+import { getServices } from "@/lib/api/services";
 
-import {
-    getServices,
-    getActiveServices,
-    deleteService,
-    createService,
-    updateService,
-} from '@/lib/api/services';
-import { getActiveServiceCategories } from '@/lib/api/service-categories';
-import {
-    Service,
-    ServiceCategory,
-    ServiceStatus,
-    QueryServiceDto,
-    UpdateServiceDto,
-    CreateServiceDto,
-    PaginatedServices,
-} from '@/types';
-import { createBooking } from '@/lib/api/bookings';
-import {
-    CreateBookingPayload,
-    BookingStatus,
-    Booking,
-
-} from '@/types/booking';
+interface Treatment {
+    id: number;
+    name: string;
+    description: string;
+    duration: number;
+    price: number;
+    priceUSD: number;
+}
 
 interface Step {
     icon: string;
@@ -91,23 +70,7 @@ interface CountryData {
     priority: number;
     areaCodes?: string[];
 }
-interface Services {
-    [key: string]: Service[];
-}
-interface CustomerCreationResponse {
-    id?: number;
-    data?: {
-        id: number;
-    };
-    success?: boolean;
-    message?: string;
-}
 
-interface BookingApiSuccessResponse {
-    success: boolean;
-    data: Booking;
-    message?: string;
-}
 
 
 const socialApps = [
@@ -128,6 +91,8 @@ export default function BookingPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [showSocialPicker, setShowSocialPicker] = useState(false);
     const [showSummary, setShowSummary] = useState(true);
+    //   const [guestServices, setGuestServices] = useState<number[][]>([]);
+    //   const [guestOpen, setGuestOpen] = useState<boolean[]>([]);
     const [applyToAll, setApplyToAll] = useState(false);
 
     const pickerRef = useRef<HTMLDivElement | null>(null);
@@ -135,37 +100,6 @@ export default function BookingPage() {
     const cardInfoRef = useRef<HTMLDivElement | null>(null);
     const mainContentRef = useRef<HTMLDivElement | null>(null);
 
-    const [services, setServices] = useState<Service[]>([]);
-    const [loadingServices, setLoadingServices] = useState(true);
-    const [errorServices, setErrorServices] = useState<string | null>(null);
-    const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
-    const [snackbar, setSnackbar] = useState<{
-        open: boolean;
-        message: string;
-        severity: 'success' | 'error';
-    }>({ open: false, message: '', severity: 'success' });
-
-    useEffect(() => {
-        const fetchServices = async () => {
-            setLoadingServices(true);
-            try {
-                const params: QueryServiceDto = {
-                    status: 'active',
-                    limit: 9999,
-                };
-                const paginatedData = await getServices(params);
-                setServices(paginatedData.data);
-                setErrorServices(null);
-            } catch (error) {
-                console.error("Failed to fetch services:", error);
-                setErrorServices(t('error.failedToLoadTreatments'));
-            } finally {
-                setLoadingServices(false);
-            }
-        };
-
-        fetchServices();
-    }, []);
     const scrollToContactInfo = useCallback(() => {
         if (!cardInfoRef.current) return;
         const rect = cardInfoRef.current.getBoundingClientRect();
@@ -186,6 +120,37 @@ export default function BookingPage() {
         { icon: "/confirm.svg", label: t('steps.confirm'), active: false },
     ];
 
+    const [treatments, setTreatments] = useState<Treatment[]>([]);
+    const [treatmentsLoading, setTreatmentsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                setTreatmentsLoading(true);
+                // Fetch all services by setting a high limit
+                const response = await getServices({ limit: 1000 });
+                const services = response.data;
+
+                const mappedTreatments: Treatment[] = services.map(service => ({
+                    id: service.id,
+                    name: service.name,
+                    description: service.description || '',
+                    duration: service.durationMinutes,
+                    price: Number(service.price) || 0,
+                    priceUSD: Number(service.priceUSD) || 0,
+                }));
+
+                setTreatments(mappedTreatments);
+            } catch (error) {
+                console.error("Failed to fetch treatments:", error);
+                // Optionally set an error state here
+            } finally {
+                setTreatmentsLoading(false);
+            }
+        };
+
+        fetchServices();
+    }, []);
 
     const [formData, setFormData] = useState({
         fullName: "",
@@ -195,6 +160,13 @@ export default function BookingPage() {
         content: "",
         socialApp: "",
     });
+
+    //   const [bookingData, setBookingData] = useState({
+    //     spa: "",
+    //     date: "",
+    //     time: "",
+    //     people: "",
+    //   });
 
     const [errors, setErrors] = useState({
         fullName: "",
@@ -211,6 +183,7 @@ export default function BookingPage() {
         selectedService: "",
     });
     const [bookingError, setBookingError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const isBookingInfoComplete = useMemo(() => {
         return Boolean(bookingData.spa && bookingData.date && bookingData.time && bookingData.people);
@@ -256,7 +229,6 @@ export default function BookingPage() {
         }
     }, [numberOfGuests]);
 
-    // 4. CẬP NHẬT LOGIC AUTO-SELECT: DÙNG services THAY VÌ treatments
     useEffect(() => {
         if (
             bookingData.selectedService &&
@@ -264,8 +236,7 @@ export default function BookingPage() {
             guestServices.length === numberOfGuests &&
             !hasAutoSelectedRef.current
         ) {
-            // Sửa tên biến từ treatments thành services
-            const selectedTreatment = services.find(
+            const selectedTreatment = treatments.find(
                 (t) => t.name === bookingData.selectedService
             );
 
@@ -285,7 +256,7 @@ export default function BookingPage() {
                 }
             }
         }
-    }, [bookingData.selectedService, numberOfGuests, guestServices, services]); // CẬP NHẬT DEPENDENCY ARRAY
+    }, [bookingData.selectedService, numberOfGuests, guestServices, treatments]);
 
     const formatDate = (dateString: string) => {
         if (!dateString) return "";
@@ -296,16 +267,13 @@ export default function BookingPage() {
         return `${day}-${month}-${year}`;
     };
 
-    // 5. CẬP NHẬT LOGIC getSelectedTreatmentsText: DÙNG services THAY VÌ treatments
-    const getSelectedTreatmentsText = (serviceIds: number[]) => {
-        if (serviceIds.length === 0) return "";
-        return serviceIds
-            .map((id) => services.find((t) => t.id === id)?.name)
-            .filter(Boolean) // Loại bỏ các giá trị undefined/null
+    const getSelectedTreatmentsText = (services: number[]) => {
+        if (services.length === 0) return "";
+        return services
+            .map((id) => treatments.find((t) => t.id === id)?.name)
             .join(", ");
     };
 
-    // 6. CẬP NHẬT LOGIC toggleGuestService: DÙNG services THAY VÌ treatments
     const toggleGuestService = (guestIndex: number, serviceId: number) => {
         const newGuestServices = [...guestServices];
 
@@ -424,7 +392,7 @@ export default function BookingPage() {
         if (!formData.phone.trim()) {
             newErrors.phone = t('cardInfor.error.erPhoneNumberRequi');
             isValid = false;
-        } else if (!/^\d{8,15}$/.test(formData.phone.replace(/[\s-]/g, ""))) {
+        } else if (!/^\d{9,15}$/.test(formData.phone.replace(/[\s-]/g, ""))) {
             newErrors.phone = t('cardInfor.error.erPhoneNumberRequiValid');
             isValid = false;
         }
@@ -502,222 +470,130 @@ export default function BookingPage() {
 
         setErrors(newErrors);
     };
-    const createNewCustomer = async () => {
-        try {
-            setIsCreatingCustomer(true);
 
-            // Chuẩn bị dữ liệu customer
-            const customerData: CreateCustomerDto = {
-                fullName: formData.fullName.trim(),
-                phone: `${dialCode.replace(/[()]/g, '')}${formData.phone.trim()}`,
-                email: formData.email.trim(),
-                customerType: CustomerType.NEW,
-                status: CustomerStatus.ACTIVE,
-                notes: formData.content.trim() || undefined,
-                gender: undefined,
-                birthday: undefined,
-                address: undefined,
-                storeId: 1,
-            };
+    const formatBookingDateForAPI = (dateString: string): string => {
+        if (!dateString) return '';
 
-            // Gọi API tạo customer
-            const response = await createCustomer(customerData);
+        let dateObject;
 
-            console.log('Customer created successfully:', response);
-            // setSnackbar({
-            //     open: true,
-            //     message: 'Customer created successfully!',
-            //     severity: 'success'
-            // });
+        // 1. Cố gắng tạo đối tượng Date từ chuỗi
+        // Xử lý chuỗi DD-MM-YYYY (VD: 24-12-2025)
+        const ddmmyyyyPattern = /^(\d{2})-(\d{2})-(\d{4})$/;
+        const match = dateString.match(ddmmyyyyPattern);
 
-            return response;
-        } catch (error) {
-            console.error('Error creating customer:', error);
-
-            // Hiển thị thông báo lỗi
-            setSnackbar({
-                open: true,
-                message: 'Failed to create customer. Please try again.',
-                severity: 'error'
-            });
-
-            throw error;
-        } finally {
-            setIsCreatingCustomer(false);
+        if (match) {
+            // Quan trọng: Tạo đối tượng Date bằng format MM/DD/YYYY để JavaScript hiểu chính xác
+            // Sử dụng giờ trưa (12:00:00) để Date object ít bị dịch chuyển ngày nhất
+            const safeDateString = `${match[2]}/${match[1]}/${match[3]} 12:00:00`;
+            dateObject = new Date(safeDateString);
+        } else {
+            // Xử lý chuỗi ISO hoặc chuỗi không chuẩn khác (như "23T17:00...-12-2025")
+            // Cố gắng tạo Date object, nó sẽ tự động xử lý múi giờ.
+            dateObject = new Date(dateString);
         }
-    };
-    const createNewBooking = async (customerId: number) => {
-        try {
-            console.log('🔵 Starting createNewBooking with customerId:', customerId);
 
-            // Validate customerId trước khi gọi API
-            if (!customerId || typeof customerId !== 'number') {
-                throw new Error(`Invalid customerId: ${customerId}`);
-            }
-
-            let bookingDateFormatted = '';
-            if (bookingData.date) {
-                const ddmmyyyyPattern = /^(\d{2})-(\d{2})-(\d{4})$/;
-                const match = bookingData.date.match(ddmmyyyyPattern);
-
-                if (match) {
-                    const day = match[1];
-                    const month = match[2];
-                    const year = match[3];
-                    bookingDateFormatted = `${year}-${month}-${day}`;
-                } else if (/^\d{4}-\d{2}-\d{2}$/.test(bookingData.date)) {
-                    bookingDateFormatted = bookingData.date;
-                } else {
-                    const dateObj = new Date(bookingData.date);
-                    if (!isNaN(dateObj.getTime())) {
-                        const year = dateObj.getFullYear();
-                        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-                        const day = String(dateObj.getDate()).padStart(2, '0');
-                        bookingDateFormatted = `${year}-${month}-${day}`;
-                    }
-                }
-            }
-
-            // Xử lý startTime - đảm bảo format HH:MM
-            let startTimeFormatted = bookingData.time;
-            if (bookingData.time) {
-                const timeParts = bookingData.time.split(':');
-                if (timeParts.length >= 2) {
-                    const hours = timeParts[0].padStart(2, '0');
-                    const minutes = timeParts[1].padStart(2, '0');
-                    startTimeFormatted = `${hours}:${minutes}`;
-                }
-            }
-
-            // Validate dữ liệu
-            if (!bookingDateFormatted) {
-                throw new Error('Invalid booking date format');
-            }
-            if (!startTimeFormatted) {
-                throw new Error('Invalid start time format');
-            }
-
-            const bookingPayload: CreateBookingPayload = {
-                customerId: customerId, // ✅ Đảm bảo customerId được truyền vào đúng
-                storeId: 1,
-                bookingDate: bookingDateFormatted,
-                startTime: startTimeFormatted,
-                status: BookingStatus.PENDING,
-                source: formData.socialApp || 'website',
-                notes: formData.content.trim() || undefined,
-                confirm: false,
-            };
-
-            console.log('📤 Booking Payload:', bookingPayload);
-
-            // Gọi API tạo booking
-            const response: BookingApiSuccessResponse = await createBooking(bookingPayload);
-
-            console.log('📥 Booking Response:', response);
-
-            if (response.success === false || !response.data) {
-                throw new Error(response.message || 'Booking creation failed: Server returned success: false or missing data.');
-            }
-
-            console.log('✅ Booking created successfully:', response.data);
-            return response;
-        } catch (error) {
-            console.error('❌ Error creating booking:', error);
-
-            if (error && typeof error === 'object' && 'response' in error) {
-                const axiosError = error as {
-                    response?: {
-                        data?: {
-                            message?: string;
-                        }
-                    }
-                };
-
-                console.error('❌ Error response from server:', axiosError.response?.data);
-
-                if (axiosError.response?.data?.message) {
-                    throw new Error(axiosError.response.data.message);
-                }
-            }
-
-            throw error;
+        // Kiểm tra tính hợp lệ
+        if (isNaN(dateObject.getTime())) {
+            console.error("Invalid date object created from:", dateString);
+            return '';
         }
+
+        // 2. Lấy YYYY-MM-DD từ giờ ĐỊA PHƯƠNG (Local Time)
+        // Điều này đảm bảo lấy ngày người dùng đã chọn (24), bất kể UTC có là ngày 23 hay không.
+        const year = dateObject.getFullYear();
+        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObject.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`; // Trả về format YYYY-MM-DD
     };
-
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         if (!isBookingInfoComplete) {
             setBookingError(t('booking.completeReservationDetails'));
             scrollToMainContent();
             return;
         }
-
         setBookingError(null);
+
         if (!validateForm()) {
             console.log("Form has errors");
             scrollToContactInfo();
             return;
         }
+        const hasServices = guestServices.some(services => services && services.length > 0);
+        if (!hasServices) {
+            setBookingError('Please select at least one service');
+            scrollToMainContent();
+            return;
+        }
 
+        setIsLoading(true);
+
+
+        const storeId = 1;
+        const roundedTotalVND = Math.round(totalVND);
+        const roundedTaxVND = Math.round(taxVND);
+        const roundedFinalVND = Math.round(finalVND);
+
+        const formattedBookingDate = formatBookingDateForAPI(bookingData.date);
+        const roundedInvoiceItems = guestServices.flatMap((serviceIds, index) =>
+            (serviceIds || []).map((serviceId) => {
+                const treatment = treatments.find((t) => t.id === serviceId);
+                if (!treatment) {
+                    console.warn(`Treatment not found for ID: ${serviceId}`);
+                    return null;
+                }
+                const price = Math.round(treatment.price || 0);
+
+                return {
+                    itemId: serviceId,
+                    itemType: ItemType.SERVICE,
+                    quantity: 1,
+                    unitPrice: price,
+                    discount: 0,
+                    totalPrice: price,
+                    itemName: treatment.name,
+                };
+            })
+        ).filter((item): item is InvoiceItemForBookingDto => item !== null);
+
+        if (roundedInvoiceItems.length === 0) {
+            setBookingError('No valid services selected');
+            setIsLoading(false);
+            return;
+        }
+
+        const orderPayload: CreateBookingOrderDto = {
+            customer: {
+                fullName: formData.fullName,
+                phone: formData.phone,
+                email: formData.email,
+            },
+            booking: {
+                storeId: storeId,
+                bookingDate: formattedBookingDate,
+                startTime: bookingData.time,
+                notes: formData.content,
+            },
+            invoice: {
+                storeId: storeId,
+                subtotal: roundedTotalVND,
+                discountAmount: 0,
+                taxAmount: roundedTaxVND,
+                totalAmount: roundedFinalVND,
+                notes: formData.content,
+                items: roundedInvoiceItems,
+            },
+        };
         try {
-            setIsCreatingCustomer(true);
-            const customerResponse = await createNewCustomer();
-
-            let customerId: number;
-
-            if (customerResponse?.data?.id) {
-                customerId = customerResponse.data.id;
-            }
-            else if (customerResponse?.id) {
-                customerId = customerResponse.id;
-            }
-            else if (customerResponse?.success && customerResponse?.data?.id) {
-                customerId = customerResponse.data.id;
-            }
-            else if (typeof customerResponse === 'number') {
-                customerId = customerResponse;
-            }
-            else {
-                throw new Error('Failed to get customer ID from response. Please check API response format.');
-            }
-
-            if (!customerId || typeof customerId !== 'number' || customerId <= 0) {
-                throw new Error(`Invalid customer ID received: ${customerId}`);
-            }
-
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            const bookingResponse = await createNewBooking(customerId);
-
-
-            setSnackbar({
-                open: true,
-                message: 'Booking created successfully! Thank you for your reservation.',
-                severity: 'success'
-            });
-
-            localStorage.removeItem('bookingData');
-
-            setTimeout(() => {
-                router.push("/thanks");
-            }, 1500);
-
+            await createBookingOrder(orderPayload);
+            localStorage.removeItem("bookingData");
+            router.push("/thanks");
         } catch (error) {
-
-            let errorMessage = 'Failed to complete your booking. Please try again.';
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            }
-
-            setSnackbar({
-                open: true,
-                message: errorMessage,
-                severity: 'error'
-            });
+            console.error("Failed to create booking:", error);
+            setBookingError("Failed to create booking. Please try again.");
         } finally {
-            setIsCreatingCustomer(false);
+            setIsLoading(false);
         }
     };
 
@@ -727,11 +603,9 @@ export default function BookingPage() {
         setAnchorEl((prev) => (prev ? null : e.currentTarget));
     };
 
-
     const allSelected = guestServices
         .filter((ids) => ids && ids.length > 0)
-        .flatMap((ids) => services.filter((t) => ids.includes(t.id)));
-
+        .flatMap((ids) => treatments.filter((t) => ids.includes(t.id)));
 
     const totalVND = allSelected.reduce((sum, t) => sum + Number(t.price), 0);
     const totalUSD = allSelected.reduce((sum, t) => sum + Number(t.priceUSD || 0), 0);
@@ -745,6 +619,7 @@ export default function BookingPage() {
 
     return (
         <Box component="main">
+            {/* Steps */}
             <Box
                 sx={{
                     height: { xs: 100, md: 120 },
@@ -915,6 +790,8 @@ export default function BookingPage() {
                                     <List dense sx={{ px: 0, paddingX: 0, fontFamily: "'Open Sans', sans-serif" }}>
                                         <ListItem disableGutters >
                                             <ListItemText
+
+
                                                 primary={<span style={{ fontFamily: "'Open Sans', sans-serif" }}>
                                                     {t('booking.date')}:
                                                 </span>}
@@ -983,7 +860,7 @@ export default function BookingPage() {
                                             {guestServices.map((serviceIds, guestIndex) => {
                                                 if (!serviceIds || serviceIds.length === 0) return null;
 
-                                                const selectedTreatments = services.filter((t) =>
+                                                const selectedTreatments = treatments.filter((t) =>
                                                     serviceIds.includes(t.id)
                                                 );
 
@@ -1022,13 +899,13 @@ export default function BookingPage() {
                                                     </Typography>
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                                         {totalVND.toLocaleString()} ₫ ($
-                                                        {Number(totalUSD).toFixed(2)})
+                                                        {Number(totalUSD || 0).toFixed(2)})
                                                     </Typography>
                                                 </Stack>
                                                 <Stack
                                                     direction="row"
                                                     justifyContent="space-between"
-                                                    sx={{ color: "green" }}
+                                                    sx={{ color: "green" }} // Changed color to match theme, tax is an addition
                                                 >
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                                         {t('prices.tax')}
@@ -1072,18 +949,7 @@ export default function BookingPage() {
                             },
                         }}>
                             {/* Guest Services */}
-                            {loadingServices && (
-                                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                                    <CircularProgress sx={{ color: '#9e2265' }} />
-                                </Box>
-                            )}
-                            {errorServices && (
-                                <Alert severity="error" sx={{ mb: 2 }}>
-                                    {errorServices}
-                                </Alert>
-                            )}
-
-                            {!loadingServices && !errorServices && Array.from({ length: numberOfGuests }, (_, index) => (
+                            {Array.from({ length: numberOfGuests }, (_, index) => (
                                 <Card key={index} sx={{ p: 0 }}>
                                     <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: '#594a39', fontFamily: "'Open Sans', sans-serif", }}>
                                         {t('booking.selectTreatmentForGuest')} {index + 1}
@@ -1162,77 +1028,82 @@ export default function BookingPage() {
                                             </Stack>
                                         </DialogTitle>
                                         <DialogContent>
-                                            {services.map((service) => (
-                                                <Paper
-                                                    key={service.id}
-                                                    sx={{
-                                                        p: 1,
-                                                        mb: 2,
-                                                        border: (guestServices[index] || []).includes(
-                                                            service.id
-                                                        )
-                                                            ? "1px solid #9e2265"
-                                                            : "1px solid #e0e0e0",
-                                                    }}
-                                                >
-                                                    <Stack
-                                                        direction="row"
-                                                        justifyContent="space-between"
-                                                        alignItems="flex-start"
+                                            {treatmentsLoading ? (
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                                                    <CircularProgress />
+                                                </Box>
+                                            ) : (
+                                                treatments.map((treatment) => (
+                                                    <Paper
+                                                        key={treatment.id}
+                                                        sx={{
+                                                            p: 1,
+                                                            mb: 2,
+                                                            border: (guestServices[index] || []).includes(
+                                                                treatment.id
+                                                            )
+                                                                ? "1px solid #9e2265"
+                                                                : "1px solid #e0e0e0",
+                                                        }}
                                                     >
-                                                        <Box sx={{ flex: 1 }}>
-                                                            <Typography
-                                                                variant="h6"
-                                                                onClick={() => toggleGuestService(index, service.id)}
-                                                                sx={{
-                                                                    mb: 1,
-                                                                    fontFamily: "'Open Sans', sans-serif",
-                                                                    cursor: "pointer",
-                                                                    "&:hover": {
-                                                                        color: "#9e2265",
-                                                                    },
-                                                                }}
-                                                            >
-                                                                {service.name}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body2"
-                                                                color="text.secondary"
-                                                                sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}
-                                                            >
-                                                                {service.description}
-                                                            </Typography>
-                                                            <Stack direction="row" spacing={2}>
-                                                                <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
-                                                                    {service.durationMinutes} {t('booking.minutes')}
+                                                        <Stack
+                                                            direction="row"
+                                                            justifyContent="space-between"
+                                                            alignItems="flex-start"
+                                                        >
+                                                            <Box sx={{ flex: 1 }}>
+                                                                <Typography
+                                                                    variant="h6"
+                                                                    onClick={() => toggleGuestService(index, treatment.id)}
+                                                                    sx={{
+                                                                        mb: 1,
+                                                                        fontFamily: "'Open Sans', sans-serif",
+                                                                        cursor: "pointer",
+                                                                        "&:hover": {
+                                                                            color: "#9e2265",
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    {treatment.name}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="body2"
-                                                                    sx={{ fontWeight: 600, fontFamily: "'Open Sans', sans-serif", }}
+                                                                    color="text.secondary"
+                                                                    sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}
                                                                 >
-                                                                    {service.price} ₫ ($
-                                                                    {Number(service.priceUSD || 0).toFixed(2)})
+                                                                    {treatment.description}
                                                                 </Typography>
-                                                            </Stack>
-                                                        </Box>
-                                                        <Checkbox
-                                                            checked={(guestServices[index] || []).includes(
-                                                                service.id
-                                                            )}
-                                                            onChange={() =>
-                                                                toggleGuestService(index, service.id)
-                                                            }
-                                                            sx={{
-                                                                color: "#9e2265",
-                                                                "&.Mui-checked": {
+                                                                <Stack direction="row" spacing={2}>
+                                                                    <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
+                                                                        {treatment.duration} {t('booking.minutes')}
+                                                                    </Typography>
+                                                                    <Typography
+                                                                        variant="body2"
+                                                                        sx={{ fontWeight: 600, fontFamily: "'Open Sans', sans-serif", }}
+                                                                    >
+                                                                        {treatment.price.toLocaleString()} ₫ ($
+                                                                        {treatment.priceUSD})
+                                                                    </Typography>
+                                                                </Stack>
+                                                            </Box>
+                                                            <Checkbox
+                                                                checked={(guestServices[index] || []).includes(
+                                                                    treatment.id
+                                                                )}
+                                                                onChange={() =>
+                                                                    toggleGuestService(index, treatment.id)
+                                                                }
+                                                                sx={{
                                                                     color: "#9e2265",
-                                                                },
-                                                            }}
-                                                        />
-                                                    </Stack>
-                                                </Paper>
-                                            ))}
-
+                                                                    "&.Mui-checked": {
+                                                                        color: "#9e2265",
+                                                                    },
+                                                                }}
+                                                            />
+                                                        </Stack>
+                                                    </Paper>
+                                                ))
+                                            )}
                                         </DialogContent>
                                         <Button
                                             variant="contained"
@@ -1669,6 +1540,7 @@ export default function BookingPage() {
                                 </Stack>
                             </Card>
 
+                            {/* Cancellation Policy */}
                             <Card sx={{ py: 3 }}>
                                 <Typography
                                     variant="h6"
@@ -1687,69 +1559,42 @@ export default function BookingPage() {
                                 </Stack>
                             </Card>
                             {/* Confirm Button */}
-                            <Grid item xs={16} md={8}>
-                                <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleSubmit}
-                                        endIcon={<ArrowForwardIosIcon sx={{ fontSize: 16 }} />}
-                                        disabled={!isBookingInfoComplete || loadingServices || isCreatingCustomer}
-                                        sx={{
-                                            fontFamily: "'Open Sans', sans-serif",
-                                            bgcolor: "#9e2265",
-                                            color: "white",
-                                            fontWeight: 600,
-                                            px: 15,
-                                            py: 2,
-                                            fontSize: "1rem",
-                                            borderRadius: 0,
-                                            textTransform: "uppercase",
-                                            "&:hover": {
-                                                bgcolor: "#d83b8a",
-                                            },
-                                            "&:disabled": {
-                                                bgcolor: "#ccc",
-                                            }
-                                        }}
-                                    >
-                                        {isCreatingCustomer ? (
-                                            <>
-                                                <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
-                                                Creating...
-                                            </>
-                                        ) : (
-                                            t('confirm')
-                                        )}
-                                    </Button>
-                                </Box>
-                                {bookingError && (
-                                    <Typography
-                                        color="error"
-                                        align="center"
-                                        sx={{ mt: 1.5, fontFamily: "'Open Sans', sans-serif" }}
-                                    >
-                                        {bookingError}
-                                    </Typography>
-                                )}
-                            </Grid>
+                            <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleSubmit}
+                                    disabled={!isBookingInfoComplete || isLoading}
+                                    sx={{
+                                        fontFamily: "'Open Sans', sans-serif",
+                                        bgcolor: "#9e2265",
+                                        color: "white",
+                                        fontWeight: 600,
+                                        px: 15,
+                                        py: 2,
+                                        fontSize: "1rem",
+                                        borderRadius: 0,
+                                        textTransform: "uppercase",
+                                        "&:hover": {
+                                            bgcolor: "#d83b8a",
+                                        },
+                                    }}
+                                >
+                                    {isLoading ? <CircularProgress size={24} color="inherit" /> : t('confirm')}
+                                </Button>
+                            </Box>
+                            {bookingError && (
+                                <Typography
+                                    color="error"
+                                    align="center"
+                                    sx={{ mt: 1.5, fontFamily: "'Open Sans', sans-serif", }}
+                                >
+                                    {bookingError}
+                                </Typography>
+                            )}
                         </Stack>
                     </Grid>
                 </Grid>
             </Box>
-            {/* <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
-                onClose={() => setSnackbar({ ...snackbar, open: false })}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert
-                    onClose={() => setSnackbar({ ...snackbar, open: false })}
-                    severity={snackbar.severity}
-                    sx={{ width: '100%' }}
-                >
-                    {snackbar.message}
-                </Alert>
-            </Snackbar> */}
 
         </Box>
 

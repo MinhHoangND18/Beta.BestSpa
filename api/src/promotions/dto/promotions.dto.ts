@@ -146,11 +146,11 @@ export class QueryPromotionDto {
   @ApiPropertyOptional({
     example: 'DESC',
     description: 'Thứ tự sắp xếp',
-    enum: ['ASC', 'DESC'],
+    enum: ['DESC', 'DESC'],
   })
   @IsOptional()
-  @IsEnum(['ASC', 'DESC'])
-  sort_order?: 'ASC' | 'DESC' = 'DESC';
+  @IsEnum(['DESC', 'DESC'])
+  sort_order?: 'DESC' | 'DESC' = 'DESC';
 }
 
 export class ValidatePromotionDto {

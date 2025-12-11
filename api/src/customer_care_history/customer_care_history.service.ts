@@ -132,7 +132,7 @@ export class CustomerCareHistoryService {
         nextCareDate: Between(today, futureDate),
       },
       relations: ['customer', 'staff'],
-      order: { nextCareDate: 'ASC' },
+      order: { nextCareDate: 'DESC' },
     });
   }
 
@@ -145,7 +145,7 @@ export class CustomerCareHistoryService {
       .leftJoinAndSelect('care.staff', 'staff')
       .where('care.nextCareDate < :today', { today })
       .andWhere('care.nextCareDate IS NOT NULL')
-      .orderBy('care.nextCareDate', 'ASC');
+      .orderBy('care.nextCareDate', 'DESC');
 
     return await queryBuilder.getMany();
   }

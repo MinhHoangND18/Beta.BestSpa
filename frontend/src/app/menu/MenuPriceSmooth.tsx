@@ -400,7 +400,7 @@ export default function SpaMenu() {
                         </Box>
                         <Button
                           variant="contained"
-                          onClick={() => handleBookNow(t(`services.${service.id}.name`))}
+                          onClick={() => handleBookNow(t(`${service.name}`))}
                           sx={{
                             fontFamily: "'Open Sans', sans-serif",
                             fontSize: "15px",

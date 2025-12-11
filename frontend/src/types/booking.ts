@@ -1,5 +1,5 @@
 // types/booking.ts
-import { Customer as CustomerType } from './customer';
+import { ItemType } from './invoice-item';
 
 export enum BookingStatus {
     PENDING = 'pending',
@@ -10,13 +10,12 @@ export enum BookingStatus {
     NO_SHOW = 'no_show'
 }
 
-// export interface Customer {
-//     id: number;
-//     full_name: string; 
-//     phone: string;
-//     email: string | null;
-// }
-export type Customer = CustomerType;
+export interface Customer {
+    id: number;
+    fullName: string; 
+    phone: string;
+    email: string | null;
+}
 
 export interface Store {
     id: number;
@@ -43,7 +42,6 @@ export interface Booking {
     updatedAt: string;
 }
 
-// Interface cho Response trả về từ findAll (có phân trang)
 export interface BookingResponse {
     data: Booking[];
     meta: {
@@ -54,7 +52,6 @@ export interface BookingResponse {
     };
 }
 
-// Payload khi tạo mới (CreateBookingDto)
 export interface CreateBookingPayload {
     customerId: number;
     storeId: number;
@@ -67,10 +64,8 @@ export interface CreateBookingPayload {
     confirm?: boolean;
 }
 
-// Payload khi cập nhật (UpdateBookingDto)
 export type UpdateBookingPayload = Partial<CreateBookingPayload>;
 
-// Query params cho filter
 export interface BookingFilters {
     page?: number;
     limit?: number;
@@ -79,3 +74,43 @@ export interface BookingFilters {
     bookingDate?: string;
     status?: BookingStatus;
 }
+
+// --- New DTOs for Creating a Booking Order ---
+
+export interface CustomerForBookingDto {
+    fullName: string;
+    phone: string;
+    email?: string;
+  }
+  
+export interface InvoiceItemForBookingDto {
+    itemId: number;
+    itemType: ItemType;
+    quantity: number;
+    unitPrice: number;
+    discount: number;
+    taxAmount: number;
+    totalPrice: number;
+    itemName: string;
+    staffId?: number;
+}
+
+export interface CreateBookingOrderDto {
+    customer: CustomerForBookingDto;
+    booking: {
+      storeId: number;
+      bookingDate: string;
+      startTime: string;
+      notes?: string;
+    };
+    invoice: {
+      storeId: number;
+      subtotal: number;
+      discountAmount: number;
+      taxAmount: number;
+      totalAmount: number;
+      notes?: string;
+      items: InvoiceItemForBookingDto[];
+    };
+}
+  

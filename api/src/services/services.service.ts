@@ -119,13 +119,13 @@ export class ServicesService {
     // Apply sorting
     switch (sortBy) {
       case 'price_asc':
-        queryBuilder.orderBy('service.price', 'ASC');
+        queryBuilder.orderBy('service.price', 'DESC');
         break;
       case 'price_desc':
         queryBuilder.orderBy('service.price', 'DESC');
         break;
       case 'duration_asc':
-        queryBuilder.orderBy('service.durationMinutes', 'ASC');
+        queryBuilder.orderBy('service.durationMinutes', 'DESC');
         break;
       case 'duration_desc':
         queryBuilder.orderBy('service.durationMinutes', 'DESC');
@@ -165,7 +165,7 @@ export class ServicesService {
         status: ServiceStatus.ACTIVE,
       },
       relations: ['category'],
-      order: { price: 'ASC' },
+      order: { price: 'DESC' },
     });
   }
 
@@ -176,7 +176,7 @@ export class ServicesService {
         status: ServiceStatus.ACTIVE,
       },
       relations: ['category'],
-      order: { price: 'ASC' },
+      order: { price: 'DESC' },
     });
   }
 
@@ -186,7 +186,7 @@ export class ServicesService {
       .leftJoinAndSelect('service.category', 'category')
       .where('service.discountPrice IS NOT NULL')
       .andWhere('service.status = :status', { status: ServiceStatus.ACTIVE })
-      .orderBy('service.discountPrice', 'ASC');
+      .orderBy('service.discountPrice', 'DESC');
 
     return await queryBuilder.getMany();
   }
@@ -334,14 +334,14 @@ export class ServicesService {
     // Get all active categories ordered by displayOrder
     const categories = await this.categoryRepository.find({
       where: { isActive: true },
-      order: { displayOrder: 'ASC' },
+      order: { displayOrder: 'DESC' },
     });
 
     // Get all active services with their categories
     const services = await this.serviceRepository.find({
       where: { status: ServiceStatus.ACTIVE },
       relations: ['category'],
-      order: { price: 'ASC' },
+      order: { price: 'DESC' },
     });
 
     // Group services by category

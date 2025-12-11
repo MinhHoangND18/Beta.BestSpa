@@ -15,6 +15,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto, UpdateBookingDto, QueryBookingDto } from './dto/bookings.dto';
+import { CreateBookingFlowDto } from './dto/create_booking_flow.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -78,6 +79,14 @@ export class BookingsController {
   @ApiResponse({ status: 404, description: 'Booking not found' })
   cancelBooking(@Param('id', ParseIntPipe) id: number) {
     return this.bookingsService.cancelBooking(id);
+  }
+
+  @Post('create-with-invoice')
+  @ApiOperation({ summary: 'Create customer + booking + invoice + items in one request' })
+  @ApiResponse({ status: 201, description: 'All resources created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request or validation error' })
+  async createWithInvoice(@Body() payload: CreateBookingFlowDto) {
+    return this.bookingsService.createWithInvoice(payload);
   }
 
   @Get('store/:storeId/date-range')

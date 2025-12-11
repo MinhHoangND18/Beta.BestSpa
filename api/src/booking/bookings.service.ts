@@ -1,15 +1,20 @@
 // src/bookings/bookings.service.ts
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Booking } from './entities/booking.entity';
 import { CreateBookingDto, UpdateBookingDto, QueryBookingDto } from './dto/bookings.dto';
+import { CreateBookingFlowDto } from './dto/create_booking_flow.dto';
+import { Customer } from '../customers/entities/customers.entity';
+import { Invoice } from '../invoices/entities/invoice.entity';
+import { InvoiceItem, ItemType } from '../invoice_items/entities/invoice_item.entity';
 
 @Injectable()
 export class BookingsService {
   constructor(
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createBookingDto: CreateBookingDto): Promise<Booking> {
@@ -121,8 +126,102 @@ export class BookingsService {
         endDate,
       })
       .leftJoinAndSelect('booking.customer', 'customer')
-      .orderBy('booking.bookingDate', 'ASC')
-      .addOrderBy('booking.startTime', 'ASC')
+      .orderBy('booking.bookingDate', 'DESC')
+      .addOrderBy('booking.startTime', 'DESC')
       .getMany();
+  }
+
+  // Create customer, booking, invoice and invoice items in a single transaction
+  async createWithInvoice(createFlowDto: CreateBookingFlowDto) {
+    return await this.dataSource.transaction(async (manager) => {
+      const customerRepo = manager.getRepository(Customer);
+      const bookingRepo = manager.getRepository(Booking);
+      const invoiceRepo = manager.getRepository(Invoice);
+      const invoiceItemRepo = manager.getRepository(InvoiceItem);
+
+      // 1) Create or reuse customer by phone
+      const phone = createFlowDto.customer.phone;
+      let customer = await customerRepo.findOne({ where: { phone } });
+
+      if (!customer) {
+        customer = customerRepo.create(createFlowDto.customer as any);
+        customer = await customerRepo.save(customer);
+      }
+
+      // 2) Create booking (attach customerId)
+      const bookingPayload: CreateBookingDto = {
+        ...createFlowDto.booking,
+        customerId: customer.id,
+      } as CreateBookingDto;
+
+      const booking = bookingRepo.create(bookingPayload as any);
+      const savedBooking = await bookingRepo.save(booking);
+
+      // 3) Compute invoice amounts from items
+      const items = createFlowDto.items || [];
+      let subtotal = 0;
+      const createdItems: InvoiceItem[] = [];
+
+      for (const it of items) {
+        const quantity = it.quantity || 1;
+        const unitPrice = Number(it.unitPrice) || 0;
+        const discount = Number(it.discount) || 0;
+        const totalPrice = Number(it.totalPrice) || ((unitPrice * quantity) - discount);
+        subtotal += totalPrice;
+      }
+
+      // Simple voucher generator
+      const voucher = `INV-${Date.now()}`;
+
+      const invoice = invoiceRepo.create({
+        voucher,
+        bookingId: savedBooking.id,
+        customerId: customer.id,
+        storeId: savedBooking.storeId,
+        subtotal,
+        discountAmount: 0,
+        taxAmount: 0,
+        totalAmount: subtotal,
+        paidAmount: 0,
+        paymentStatus: 'pending',
+      } as any);
+
+      const savedInvoice = await invoiceRepo.save(invoice);
+
+      // 4) Create invoice items (link to savedInvoice)
+      for (const it of items) {
+        const invItem = invoiceItemRepo.create({
+          invoiceId: savedInvoice.id,
+          itemType: ItemType.SERVICE,
+          itemId: it.itemId,
+          itemName: it.itemName || null,
+          staffId: it.staffId || null,
+          quantity: it.quantity || 1,
+          unitPrice: it.unitPrice,
+          discount: it.discount || 0,
+          totalPrice: it.totalPrice || ((it.unitPrice || 0) * (it.quantity || 1) - (it.discount || 0)),
+        } as any);
+
+        const created = await invoiceItemRepo.save(invItem);
+        createdItems.push(created);
+      }
+
+      // 5) Optionally update customer visit/totalSpent
+      try {
+        customer.totalSpent = Number(customer.totalSpent || 0) + Number(subtotal || 0);
+        customer.totalVisits = (customer.totalVisits || 0) + 1;
+        customer.lastVisitDate = new Date();
+        await customerRepo.save(customer);
+      } catch (err) {
+        // ignore non-critical update
+      }
+
+      return {
+        customer,
+        booking: savedBooking,
+        invoice: savedInvoice,
+        items: createdItems,
+      };
+    });
   }
 }

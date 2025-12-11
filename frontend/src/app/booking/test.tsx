@@ -30,8 +30,7 @@ import {
     Portal,
     Popper,
     ClickAwayListener,
-    CircularProgress, // Thêm CircularProgress cho loading
-    Alert, // Thêm Alert cho error
+    CircularProgress,
 } from "@mui/material";
 import {
     Close,
@@ -44,26 +43,20 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { allCountries } from "country-telephone-data";
 import { useTranslation } from 'react-i18next';
+import { CreateBookingOrderDto } from "@/types/booking";
+import { ItemType } from "@/types/invoice-item";
+import { createBookingOrder } from "@/lib/api/bookings";
+import { getServices } from "@/lib/api/services";
 
-// 1. IMPORT CÁC TYPES VÀ API
-import {
-  getServices,
-  deleteService,
-  createService,
-  updateService,
-} from '@/lib/api/services';
-import { getActiveServiceCategories } from '@/lib/api/service-categories';
-import {
-  Service,
-  ServiceCategory,
-  ServiceStatus,
-  QueryServiceDto,
-  UpdateServiceDto,
-  CreateServiceDto,
-  PaginatedServices,
-} from '@/types';
+interface Treatment {
+    id: number;
+    name: string;
+    description: string;
+    duration: number;
+    price: number;
+    priceUSD: number;
+}
 
-// Thay thế Treatment interface bằng Service interface đã import
 interface Step {
     icon: string;
     label: string;
@@ -77,6 +70,7 @@ interface CountryData {
     priority: number;
     areaCodes?: string[];
 }
+
 
 
 const socialApps = [
@@ -97,6 +91,8 @@ export default function BookingPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [showSocialPicker, setShowSocialPicker] = useState(false);
     const [showSummary, setShowSummary] = useState(true);
+    //   const [guestServices, setGuestServices] = useState<number[][]>([]);
+    //   const [guestOpen, setGuestOpen] = useState<boolean[]>([]);
     const [applyToAll, setApplyToAll] = useState(false);
 
     const pickerRef = useRef<HTMLDivElement | null>(null);
@@ -104,29 +100,6 @@ export default function BookingPage() {
     const cardInfoRef = useRef<HTMLDivElement | null>(null);
     const mainContentRef = useRef<HTMLDivElement | null>(null);
 
-    const [services, setServices] = useState<Service[]>([]);
-    const [loadingServices, setLoadingServices] = useState(true);
-    const [errorServices, setErrorServices] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchServices = async () => {
-            setLoadingServices(true);
-            setErrorServices(null);
-            try {
-    
-                const response = await getServices({});
-              
-                setServices(response.data); 
-            } catch (error) {
-                console.error("Error fetching services:", error);
-                setErrorServices(t('error.failedToLoadTreatments')); // Sử dụng key i18n phù hợp
-            } finally {
-                setLoadingServices(false);
-            }
-        };
-
-        fetchServices();
-    }, []); 
     const scrollToContactInfo = useCallback(() => {
         if (!cardInfoRef.current) return;
         const rect = cardInfoRef.current.getBoundingClientRect();
@@ -147,6 +120,37 @@ export default function BookingPage() {
         { icon: "/confirm.svg", label: t('steps.confirm'), active: false },
     ];
 
+    const [treatments, setTreatments] = useState<Treatment[]>([]);
+    const [treatmentsLoading, setTreatmentsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                setTreatmentsLoading(true);
+                // Fetch all services by setting a high limit
+                const response = await getServices({ limit: 1000 });
+                const services = response.data;
+                
+                const mappedTreatments: Treatment[] = services.map(service => ({
+                    id: service.id,
+                    name: service.name,
+                    description: service.description || '',
+                    duration: service.durationMinutes,
+                    price: service.price,
+                    priceUSD: service.priceUSD || 0,
+                }));
+
+                setTreatments(mappedTreatments);
+            } catch (error) {
+                console.error("Failed to fetch treatments:", error);
+                // Optionally set an error state here
+            } finally {
+                setTreatmentsLoading(false);
+            }
+        };
+
+        fetchServices();
+    }, []);
 
     const [formData, setFormData] = useState({
         fullName: "",
@@ -156,6 +160,13 @@ export default function BookingPage() {
         content: "",
         socialApp: "",
     });
+
+    //   const [bookingData, setBookingData] = useState({
+    //     spa: "",
+    //     date: "",
+    //     time: "",
+    //     people: "",
+    //   });
 
     const [errors, setErrors] = useState({
         fullName: "",
@@ -172,6 +183,7 @@ export default function BookingPage() {
         selectedService: "",
     });
     const [bookingError, setBookingError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const isBookingInfoComplete = useMemo(() => {
         return Boolean(bookingData.spa && bookingData.date && bookingData.time && bookingData.people);
@@ -217,7 +229,6 @@ export default function BookingPage() {
         }
     }, [numberOfGuests]);
 
-    // 4. CẬP NHẬT LOGIC AUTO-SELECT: DÙNG services THAY VÌ treatments
     useEffect(() => {
         if (
             bookingData.selectedService && 
@@ -225,8 +236,7 @@ export default function BookingPage() {
             guestServices.length === numberOfGuests &&
             !hasAutoSelectedRef.current
         ) {
-            // Sửa tên biến từ treatments thành services
-            const selectedTreatment = services.find(
+            const selectedTreatment = treatments.find(
                 (t) => t.name === bookingData.selectedService
             );
 
@@ -246,7 +256,7 @@ export default function BookingPage() {
                 }
             }
         }
-    }, [bookingData.selectedService, numberOfGuests, guestServices, services]); // CẬP NHẬT DEPENDENCY ARRAY
+    }, [bookingData.selectedService, numberOfGuests, guestServices, treatments]);
 
     const formatDate = (dateString: string) => {
         if (!dateString) return "";
@@ -257,16 +267,13 @@ export default function BookingPage() {
         return `${day}-${month}-${year}`;
     };
 
-    // 5. CẬP NHẬT LOGIC getSelectedTreatmentsText: DÙNG services THAY VÌ treatments
-    const getSelectedTreatmentsText = (serviceIds: number[]) => {
-        if (serviceIds.length === 0) return "";
-        return serviceIds
-            .map((id) => services.find((t) => t.id === id)?.name)
-            .filter(Boolean) // Loại bỏ các giá trị undefined/null
+    const getSelectedTreatmentsText = (services: number[]) => {
+        if (services.length === 0) return "";
+        return services
+            .map((id) => treatments.find((t) => t.id === id)?.name)
             .join(", ");
     };
 
-    // 6. CẬP NHẬT LOGIC toggleGuestService: DÙNG services THAY VÌ treatments
     const toggleGuestService = (guestIndex: number, serviceId: number) => {
         const newGuestServices = [...guestServices];
 
@@ -464,7 +471,7 @@ export default function BookingPage() {
         setErrors(newErrors);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!isBookingInfoComplete) {
             setBookingError(t('booking.completeReservationDetails'));
@@ -472,12 +479,66 @@ export default function BookingPage() {
             return;
         }
         setBookingError(null);
-        if (validateForm()) {
-            console.log("Form is valid:", formData);
-            router.push("/thanks");
-        } else {
+    
+        if (!validateForm()) {
             console.log("Form has errors");
             scrollToContactInfo();
+            return;
+        }
+    
+        setIsLoading(true);
+    
+        // Assume storeId is 1 for now, as it's not in the component's state
+        const storeId = 1;
+    
+        const invoiceItems = guestServices.flatMap((serviceIds) =>
+            serviceIds.map((serviceId) => {
+                const treatment = treatments.find((t) => t.id === serviceId);
+                return {
+                    itemId: serviceId,
+                    itemType: ItemType.SERVICE, // Assuming all are services
+                    quantity: 1, // Assuming quantity is always 1 per service selection
+                    unitPrice: treatment?.price || 0,
+                    discount: 0, // No per-item discount in UI, handle at invoice level
+                    totalPrice: treatment?.price || 0,
+                    itemName: treatment?.name,
+                };
+            })
+        );
+    
+        const orderPayload: CreateBookingOrderDto = {
+            customer: {
+                fullName: formData.fullName,
+                phone: formData.phone,
+                email: formData.email,
+            },
+            booking: {
+                storeId: storeId, // Hardcoded for now
+                bookingDate: bookingData.date,
+                startTime: bookingData.time,
+                notes: formData.content,
+            },
+            invoice: {
+                storeId: storeId, // Hardcoded for now
+                subtotal: totalVND,
+                // discountAmount: discountVND,
+                taxAmount: 0, // No tax in UI
+                totalAmount: finalVND,
+                notes: formData.content,
+                items: invoiceItems,
+            },
+        };
+    
+        try {
+            await createBookingOrder(orderPayload);
+            // Clear data from local storage after successful booking
+            localStorage.removeItem("bookingData");
+            router.push("/thanks");
+        } catch (error) {
+            console.error("Failed to create booking:", error);
+            setBookingError("Failed to create booking. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -486,28 +547,25 @@ export default function BookingPage() {
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
         setAnchorEl((prev) => (prev ? null : e.currentTarget));
     };
+    // const handleClose = () => {
+    //     setAnchorEl(null);
+    // };
 
-    // 7. CẬP NHẬT LOGIC TÍNH TỔNG: DÙNG services THAY VÌ treatments
     // Calculate totals
     const allSelected = guestServices
         .filter((ids) => ids && ids.length > 0)
-        .flatMap((ids) => services.filter((t) => ids.includes(t.id)));
+        .flatMap((ids) => treatments.filter((t) => ids.includes(t.id)));
 
-    // Đảm bảo rằng price và priceUSD không phải là null/undefined
     const totalVND = allSelected.reduce((sum, t) => sum + t.price, 0);
-    const totalUSD = allSelected.reduce((sum, t) => sum + (t.priceUSD || 0), 0); // Sử dụng (t.priceUSD || 0) để an toàn
-    
-    // Thay thế 'discount' bằng 'tax' với giá trị 8%
-    const taxRate = 0.08; // 8% Tax
-    const taxVND = totalVND * taxRate; // Tính 8% Tax bằng VND
-    const taxUSD = totalUSD * taxRate; // Tính 8% Tax bằng USD
-    
-    // Tổng cuối cùng = Tổng ban đầu + Tax
-    const finalVND = totalVND + taxVND; 
-    const finalUSD = totalUSD + taxUSD;
+    const totalUSD = allSelected.reduce((sum, t) => sum + t.priceUSD, 0);
+    const discountVND = totalVND * 0.1;
+    const discountUSD = totalUSD * 0.1;
+    const finalVND = totalVND - discountVND;
+    const finalUSD = totalUSD - discountUSD;
 
     return (
         <Box component="main">
+            {/* Steps */}
             <Box
                 sx={{
                     height: { xs: 100, md: 120 },
@@ -676,8 +734,10 @@ export default function BookingPage() {
                                     }}
                                 >
                                     <List dense sx={{ px: 0, paddingX: 0, fontFamily: "'Open Sans', sans-serif" }}>
-                                        <ListItem disableGutters >                                            
+                                        <ListItem disableGutters >
                                             <ListItemText
+
+
                                                 primary={<span style={{ fontFamily: "'Open Sans', sans-serif" }}>
                                                     {t('booking.date')}:
                                                 </span>}
@@ -746,8 +806,7 @@ export default function BookingPage() {
                                             {guestServices.map((serviceIds, guestIndex) => {
                                                 if (!serviceIds || serviceIds.length === 0) return null;
 
-                                                // Dùng services đã fetch
-                                                const selectedTreatments = services.filter((t) =>
+                                                const selectedTreatments = treatments.filter((t) =>
                                                     serviceIds.includes(t.id)
                                                 );
 
@@ -786,7 +845,7 @@ export default function BookingPage() {
                                                     </Typography>
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                                         {totalVND.toLocaleString()} ₫ ($
-                                                        {totalUSD.toFixed(2)})
+                                                        {Number(totalUSD || 0).toFixed(2)})
                                                     </Typography>
                                                 </Stack>
                                                 <Stack
@@ -795,11 +854,11 @@ export default function BookingPage() {
                                                     sx={{ color: "green" }}
                                                 >
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                                        {t('prices.tax')}
+                                                        {t('prices.discount')}
                                                     </Typography>
                                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                                        + {taxVND.toLocaleString()} ₫ ($
-                                                        {taxUSD.toFixed(2)})
+                                                        - {discountVND.toLocaleString()} ₫ ($
+                                                        {discountUSD.toFixed(2)})
                                                     </Typography>
                                                 </Stack>
                                                 <Stack direction="row" justifyContent="space-between">
@@ -836,18 +895,7 @@ export default function BookingPage() {
                             },
                         }}>
                             {/* Guest Services */}
-                            {loadingServices && (
-                                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                                    <CircularProgress sx={{ color: '#9e2265' }} />
-                                </Box>
-                            )}
-                            {errorServices && (
-                                <Alert severity="error" sx={{ mb: 2 }}>
-                                    {errorServices}
-                                </Alert>
-                            )}
-                            
-                            {!loadingServices && !errorServices && Array.from({ length: numberOfGuests }, (_, index) => (
+                            {Array.from({ length: numberOfGuests }, (_, index) => (
                                 <Card key={index} sx={{ p: 0 }}>
                                     <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: '#594a39', fontFamily: "'Open Sans', sans-serif", }}>
                                         {t('booking.selectTreatmentForGuest')} {index + 1}
@@ -926,78 +974,82 @@ export default function BookingPage() {
                                             </Stack>
                                         </DialogTitle>
                                         <DialogContent>
-                                            {/* 8. HIỂN THỊ SERVICES ĐÃ FETCH */}
-                                            {services.map((treatment) => (
-                                                <Paper
-                                                    key={treatment.id}
-                                                    sx={{
-                                                        p: 1,
-                                                        mb: 2,
-                                                        border: (guestServices[index] || []).includes(
-                                                            treatment.id
-                                                        )
-                                                            ? "1px solid #9e2265"
-                                                            : "1px solid #e0e0e0",
-                                                    }}
-                                                >
-                                                    <Stack
-                                                        direction="row"
-                                                        justifyContent="space-between"
-                                                        alignItems="flex-start"
+                                            {treatmentsLoading ? (
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                                                    <CircularProgress />
+                                                </Box>
+                                            ) : (
+                                                treatments.map((treatment) => (
+                                                    <Paper
+                                                        key={treatment.id}
+                                                        sx={{
+                                                            p: 1,
+                                                            mb: 2,
+                                                            border: (guestServices[index] || []).includes(
+                                                                treatment.id
+                                                            )
+                                                                ? "1px solid #9e2265"
+                                                                : "1px solid #e0e0e0",
+                                                        }}
                                                     >
-                                                        <Box sx={{ flex: 1 }}>
-                                                            <Typography 
-                                                                variant="h6" 
-                                                                onClick={() => toggleGuestService(index, treatment.id)}
-                                                                sx={{ 
-                                                                    mb: 1, 
-                                                                    fontFamily: "'Open Sans', sans-serif",
-                                                                    cursor: "pointer",
-                                                                    "&:hover": {
-                                                                        color: "#9e2265",
-                                                                    },
-                                                                }}
-                                                            >
-                                                                {treatment.name}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body2"
-                                                                color="text.secondary"
-                                                                sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}
-                                                            >
-                                                                {treatment.description}
-                                                            </Typography>
-                                                            <Stack direction="row" spacing={2}>
-                                                                <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
-                                                                    {treatment.durationMinutes} {t('booking.minutes')} {/* Dùng durationMinutes */}
+                                                        <Stack
+                                                            direction="row"
+                                                            justifyContent="space-between"
+                                                            alignItems="flex-start"
+                                                        >
+                                                            <Box sx={{ flex: 1 }}>
+                                                                <Typography 
+                                                                    variant="h6" 
+                                                                    onClick={() => toggleGuestService(index, treatment.id)}
+                                                                    sx={{ 
+                                                                        mb: 1, 
+                                                                        fontFamily: "'Open Sans', sans-serif",
+                                                                        cursor: "pointer",
+                                                                        "&:hover": {
+                                                                            color: "#9e2265",
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    {treatment.name}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="body2"
-                                                                    sx={{ fontWeight: 600, fontFamily: "'Open Sans', sans-serif", }}
+                                                                    color="text.secondary"
+                                                                    sx={{ mb: 1, fontFamily: "'Open Sans', sans-serif", }}
                                                                 >
-                                                                    {treatment.price.toLocaleString()} ₫ ($
-                                                                    {(treatment.priceUSD || 0).toFixed(2)}) {/* Dùng priceUSD và toFixed(2) */}
+                                                                    {treatment.description}
                                                                 </Typography>
-                                                            </Stack>
-                                                        </Box>
-                                                        <Checkbox
-                                                            checked={(guestServices[index] || []).includes(
-                                                                treatment.id
-                                                            )}
-                                                            onChange={() =>
-                                                                toggleGuestService(index, treatment.id)
-                                                            }
-                                                            sx={{
-                                                                color: "#9e2265",
-                                                                "&.Mui-checked": {
+                                                                <Stack direction="row" spacing={2}>
+                                                                    <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
+                                                                        {treatment.duration} {t('booking.minutes')}
+                                                                    </Typography>
+                                                                    <Typography
+                                                                        variant="body2"
+                                                                        sx={{ fontWeight: 600, fontFamily: "'Open Sans', sans-serif", }}
+                                                                    >
+                                                                        {treatment.price.toLocaleString()} ₫ ($
+                                                                        {treatment.priceUSD})
+                                                                    </Typography>
+                                                                </Stack>
+                                                            </Box>
+                                                            <Checkbox
+                                                                checked={(guestServices[index] || []).includes(
+                                                                    treatment.id
+                                                                )}
+                                                                onChange={() =>
+                                                                    toggleGuestService(index, treatment.id)
+                                                                }
+                                                                sx={{
                                                                     color: "#9e2265",
-                                                                },
-                                                            }}
-                                                        />
-                                                    </Stack>
-                                                </Paper>
-                                            ))}
-
+                                                                    "&.Mui-checked": {
+                                                                        color: "#9e2265",
+                                                                    },
+                                                                }}
+                                                            />
+                                                        </Stack>
+                                                    </Paper>
+                                                ))
+                                            )}
                                         </DialogContent>
                                         <Button
                                             variant="contained"
@@ -1042,7 +1094,7 @@ export default function BookingPage() {
                                 </Card>
                             ))}
 
-                            {/* ... (Các phần khác không thay đổi) ... */}
+                            {/* Contact Info */}
                             <Card
                                 ref={cardInfoRef}
                                 sx={{
@@ -1434,6 +1486,7 @@ export default function BookingPage() {
                                 </Stack>
                             </Card>
 
+                            {/* Cancellation Policy */}
                             <Card sx={{ py: 3 }}>
                                 <Typography
                                     variant="h6"
@@ -1456,8 +1509,7 @@ export default function BookingPage() {
                                 <Button
                                     variant="contained"
                                     onClick={handleSubmit}
-                                    endIcon={<ArrowForwardIosIcon sx={{ fontSize: 16 }} />}
-                                    disabled={!isBookingInfoComplete || loadingServices} // Thêm disabled khi đang loading
+                                    disabled={!isBookingInfoComplete || isLoading}
                                     sx={{
                                         fontFamily: "'Open Sans', sans-serif",
                                         bgcolor: "#9e2265",
@@ -1473,7 +1525,7 @@ export default function BookingPage() {
                                         },
                                     }}
                                 >
-                                    {t('confirm')}
+                                    {isLoading ? <CircularProgress size={24} color="inherit" /> : t('confirm')}
                                 </Button>
                             </Box>
                             {bookingError && (
