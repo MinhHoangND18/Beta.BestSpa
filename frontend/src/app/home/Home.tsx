@@ -272,12 +272,12 @@ export default function HomePage() {
 
     const products = [
         {
-          id: 1,
-          image: '/images/5.png',
-          title: t('products.1.title'),
-          duration: t('products.1.duration'),
-          description: t('products.1.description'),
-          price: '550,000 ₫ ($20.37)',
+            id: 1,
+            image: '/images/5.png',
+            title: t('products.1.title'),
+            duration: t('products.1.duration'),
+            description: t('products.1.description'),
+            price: '550,000 ₫ ($20.37)',
         },
         {
             id: 2,
@@ -461,6 +461,39 @@ export default function HomePage() {
 
         return result;
     }, [selectedDate]);
+
+    const isDayFullyBooked = useCallback((date: Dayjs): boolean => {
+        const now = dayjs();
+        const dateDayjs = dayjs(date);
+        if (!dateDayjs.isSame(now, 'day')) {
+            return false; 
+        }
+
+        const times = {
+            Morning: ['10:00', '10:30', '11:00', '11:30'],
+            Afternoon: [
+                '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+                '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
+            ],
+            Evening: ['19:00', '19:30', '20:00', '20:30'],
+        };
+
+        let hasRemainingSlots = false;
+
+        Object.values(times).forEach((slots) => {
+            slots.forEach((time) => {
+                const [hour, minute] = time.split(':').map(Number);
+                const slotTime = dateDayjs.hour(hour).minute(minute);
+
+                if (slotTime.isAfter(now)) {
+                    hasRemainingSlots = true;
+                }
+            });
+        });
+
+        return !hasRemainingSlots;
+
+    }, []);
     // Banner auto-slide effect
     useEffect(() => {
         const interval = setInterval(() => {
@@ -477,7 +510,7 @@ export default function HomePage() {
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box sx={{ flexGrow: 1 }}>
                 {/* Hero Banner Section */}
-                <Box sx={{ position: "relative", height: { xs: "50vh", md: "100vh" }, overflow: "hidden",   maxHeight: '860px', }}>
+                <Box sx={{ position: "relative", height: { xs: "50vh", md: "100vh" }, overflow: "hidden", maxHeight: '860px', }}>
                     <React.Fragment>
                         <GlobalStyles
                             styles={{
@@ -506,7 +539,7 @@ export default function HomePage() {
                                         width: '100%',
                                         height: '100%',
                                         position: 'relative',
-                                      
+
                                         // '@media (max-width: 600px)': {
                                         //     height: '45vh',
                                         // },
@@ -531,7 +564,7 @@ export default function HomePage() {
                     {/* Text trên pagination */}
                     <Box
                         sx={{
-                            
+
                             position: "absolute",
                             bottom: "80px",
                             left: "50%",
@@ -614,7 +647,7 @@ export default function HomePage() {
                                                 },
                                             }}
                                         >
-                                            <InputLabel sx={{py: 0.1}}>{t('booking.location')}</InputLabel>
+                                            <InputLabel sx={{ py: 0.1 }}>{t('booking.location')}</InputLabel>
                                             <Select
                                                 value={formData.spa}
                                                 label={t('booking.location')}
@@ -650,6 +683,9 @@ export default function HomePage() {
                                                 setIsDatePickerOpen(false);
                                             }}
                                             minDate={dayjs()}
+                                
+                                                shouldDisableDate={isDayFullyBooked} 
+                    
                                             open={isDatePickerOpen}
                                             onOpen={() => setIsDatePickerOpen(true)}
                                             onClose={() => setIsDatePickerOpen(false)}
@@ -782,9 +818,9 @@ export default function HomePage() {
                                                                 letterSpacing: '0.3px'
                                                             }}
                                                         >
-                                                            {period === 'Morning' ? t('booking.morning') : 
-                                                             period === 'Afternoon' ? t('booking.afternoon') : 
-                                                             period === 'Evening' ? t('booking.evening') : period}:
+                                                            {period === 'Morning' ? t('booking.morning') :
+                                                                period === 'Afternoon' ? t('booking.afternoon') :
+                                                                    period === 'Evening' ? t('booking.evening') : period}:
                                                         </Typography>
                                                         <Box
                                                             sx={{
@@ -969,7 +1005,7 @@ export default function HomePage() {
                         textAlign: "center",
                     }}
                 >
-                    <Container maxWidth="lg" sx={{p: 2}}>
+                    <Container maxWidth="lg" sx={{ p: 2 }}>
                         <ThemeProvider theme={theme}>
                             <Typography
                                 variant="h2"
@@ -1024,7 +1060,7 @@ export default function HomePage() {
                             <Typography variant="body1" sx={{ mb: 2, fontFamily: "'Open Sans', sans-serif", fontSize: 16 }}>
                                 {t('home.about.location')}
                             </Typography>
-                            <Typography variant="body1" sx={{ mb: 2, fontFamily: "'Open Sans', sans-serif", fontSize: 16 }}> 
+                            <Typography variant="body1" sx={{ mb: 2, fontFamily: "'Open Sans', sans-serif", fontSize: 16 }}>
                                 {t('home.about.services')}
                             </Typography>
                         </Box>
@@ -1119,9 +1155,9 @@ export default function HomePage() {
                                             >
                                                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                                                     <AccessTimeIcon sx={{ fontSize: 16 }} />
-                                                    <Typography variant="body2" sx = {{fontFamily: "'Open Sans', sans-serif",}}>{product.duration}</Typography>
+                                                    <Typography variant="body2" sx={{ fontFamily: "'Open Sans', sans-serif", }}>{product.duration}</Typography>
                                                 </Box>
-                                                <Typography variant="body1" sx={{ fontSize: 14 , fontFamily: "'Open Sans', sans-serif",}} >
+                                                <Typography variant="body1" sx={{ fontSize: 14, fontFamily: "'Open Sans', sans-serif", }} >
                                                     {product.price}
                                                 </Typography>
                                             </Box>
@@ -1161,13 +1197,13 @@ export default function HomePage() {
 
                                             <Box component="ul" sx={{ pl: 1, m: 0, fontFamily: "'Open Sans', sans-serif", fontSize: '14px', }}>
                                                 <li>
-                                                    <Typography variant="body2" color="text.primary" sx={{fontFamily: "'Open Sans', sans-serif", fontSize: '14px',}}>
+                                                    <Typography variant="body2" color="text.primary" sx={{ fontFamily: "'Open Sans', sans-serif", fontSize: '14px', }}>
                                                         <strong>{t('home.featuredProducts.duration')}</strong> {product.duration}
                                                     </Typography>
                                                 </li>
 
                                                 <li>
-                                                    <Typography variant="body2" color="text.primary" sx={{fontFamily: "'Open Sans', sans-serif", fontSize: '14px',}}>
+                                                    <Typography variant="body2" color="text.primary" sx={{ fontFamily: "'Open Sans', sans-serif", fontSize: '14px', }}>
                                                         <strong>{t('home.featuredProducts.price')}</strong> {product.price}
                                                     </Typography>
                                                 </li>
@@ -1568,15 +1604,15 @@ export default function HomePage() {
                                     <Box sx={{
                                         flexShrink: 0,
                                         color: "#9e2265",
-                                        backgroundColor: "#fceef3ff", 
-                                        borderRadius: "50%", 
-                                        width: 60, 
-                                        height: 60, 
+                                        backgroundColor: "#fceef3ff",
+                                        borderRadius: "50%",
+                                        width: 60,
+                                        height: 60,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        mx: { xs: 0, md: "auto" }, 
-                                        mb: { xs: 0, md: 2 } 
+                                        mx: { xs: 0, md: "auto" },
+                                        mb: { xs: 0, md: 2 }
                                     }}>
                                         {feature.icon}
                                     </Box>
@@ -1592,7 +1628,7 @@ export default function HomePage() {
                                             }}>
                                             {feature.title}
                                         </Typography>
-                                        <Typography variant="body2" color="text.secondary" sx={{fontFamily: "'Open Sans', sans-serif",}}>
+                                        <Typography variant="body2" color="text.secondary" sx={{ fontFamily: "'Open Sans', sans-serif", }}>
                                             {feature.description}
                                         </Typography>
                                     </Box>
@@ -1654,9 +1690,9 @@ export default function HomePage() {
                                         {Object.entries(filteredTimes).map(([period, timeSlots]) =>
                                             timeSlots.map((time) => (
                                                 <MenuItem key={time} value={time}>
-                                                    {time} ({period === 'Morning' ? t('booking.morning') : 
-                                                             period === 'Afternoon' ? t('booking.afternoon') : 
-                                                             period === 'Evening' ? t('booking.evening') : period})
+                                                    {time} ({period === 'Morning' ? t('booking.morning') :
+                                                        period === 'Afternoon' ? t('booking.afternoon') :
+                                                            period === 'Evening' ? t('booking.evening') : period})
                                                 </MenuItem>
                                             ))
                                         )}

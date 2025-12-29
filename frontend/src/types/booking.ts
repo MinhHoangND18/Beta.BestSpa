@@ -53,7 +53,7 @@ export interface BookingResponse {
 }
 
 export interface CreateBookingPayload {
-    customerId: number;
+    customerId?: number;
     storeId: number;
     bookingDate: string;
     startTime: string;

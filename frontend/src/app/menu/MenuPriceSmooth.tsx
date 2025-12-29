@@ -12,6 +12,8 @@ import {
   Paper,
   Link,
   Stack,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 import FormBooking from "@components/FormBooking";
 import { useRouter } from "next/navigation";
@@ -204,9 +206,21 @@ export default function SpaMenu() {
 
   if (isLoading) {
     return (
-      <Container sx={{ py: 10, textAlign: "center" }}>
-        <Typography variant="h5">{t("menu.loading")}</Typography>
-      </Container>
+      <Backdrop
+        sx={{
+          color: '#fff',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(4px)',
+        }}
+        open={isLoading}
+      >
+        <CircularProgress 
+          size={50} 
+          thickness={4} 
+          sx={{ color: "#9e2265" }} 
+        />
+      </Backdrop>
     );
   }
 
@@ -334,91 +348,91 @@ export default function SpaMenu() {
               )}
               <Grid container spacing={2}>
                 {(services[tab.id] || []).map((service) => (
-                    <Grid item xs={12} key={service.id}>
-                      <Paper
+                  <Grid item xs={12} key={service.id}>
+                    <Paper
+                      sx={{
+                        p: { xs: 2, md: 4 },
+                        display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
+                        justifyContent: "space-between",
+                        alignItems: { xs: "flex-start", sm: "center" },
+                        gap: 2,
+                        height: "100%",
+                        borderBottom: "1px solid #d0ceceff",
+                        boxShadow: "none",
+                      }}
+                    >
+                      <Box
                         sx={{
-                          p: { xs: 2, md: 4 },
-                          display: "flex",
-                          flexDirection: { xs: "column", sm: "row" },
-                          justifyContent: "space-between",
-                          alignItems: { xs: "flex-start", sm: "center" },
-                          gap: 2,
-                          height: "100%",
-                          borderBottom: "1px solid #d0ceceff",
-                          boxShadow: "none",
+                          flex: 1,
+                          textAlign: "left",
                         }}
                       >
-                        <Box
+                        <Typography
+                          variant="h6"
                           sx={{
-                            flex: 1,
-                            textAlign: "left",
-                          }}
-                        >
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              fontWeight: 600,
-                              fontFamily: "'Open Sans', sans-serif",
-                              fontSize: "20px",
-                            }}
-                          >
-                            {service.name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                              mt: 1,
-                              fontFamily: "'Open Sans', sans-serif",
-                              fontSize: "14px",
-                            }}
-                          >
-                            {service.description}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              mt: 1,
-                              fontFamily: "'Open Sans', sans-serif",
-                              fontSize: "14px",
-                            }}
-                          >
-                            {service.durationMinutes} {t("booking.minutes")}
-                            &bull;
-                            <strong>
-                              {new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(service.price)}{" "}
-                              (
-                              {new Intl.NumberFormat("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                              }).format(service.priceUSD || 0)}
-                              )
-                            </strong>
-                          </Typography>
-                        </Box>
-                        <Button
-                          variant="contained"
-                          onClick={() => handleBookNow(t(`${service.name}`))}
-                          sx={{
-                            fontFamily: "'Open Sans', sans-serif",
-                            fontSize: "15px",
-                            borderRadius: 0,
-                            background: "#9e2265",
-                            width: { xs: "100%", sm: "150px" },
-                            height: "50px",
                             fontWeight: 600,
-                            "&:hover": {
-                              background: "#7d1a50",
-                            },
+                            fontFamily: "'Open Sans', sans-serif",
+                            fontSize: "20px",
                           }}
                         >
-                          {t("booking.bookNow")}
-                        </Button>
-                      </Paper>
-                    </Grid>
-                  ))}
+                          {service.name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            mt: 1,
+                            fontFamily: "'Open Sans', sans-serif",
+                            fontSize: "14px",
+                          }}
+                        >
+                          {service.description}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            mt: 1,
+                            fontFamily: "'Open Sans', sans-serif",
+                            fontSize: "14px",
+                          }}
+                        >
+                          {service.durationMinutes} {t("booking.minutes")}
+                          &bull;
+                          <strong>
+                            {new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(service.price)}{" "}
+                            (
+                            {new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            }).format(service.priceUSD || 0)}
+                            )
+                          </strong>
+                        </Typography>
+                      </Box>
+                      <Button
+                        variant="contained"
+                        onClick={() => handleBookNow(t(`${service.name}`))}
+                        sx={{
+                          fontFamily: "'Open Sans', sans-serif",
+                          fontSize: "15px",
+                          borderRadius: 0,
+                          background: "#9e2265",
+                          width: { xs: "100%", sm: "150px" },
+                          height: "50px",
+                          fontWeight: 600,
+                          "&:hover": {
+                            background: "#7d1a50",
+                          },
+                        }}
+                      >
+                        {t("booking.bookNow")}
+                      </Button>
+                    </Paper>
+                  </Grid>
+                ))}
               </Grid>
             </Box>
           ))}

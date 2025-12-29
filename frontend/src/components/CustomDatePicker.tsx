@@ -24,6 +24,7 @@ interface CustomDatePickerProps {
   open?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
+  shouldDisableDate?: (day: Dayjs) => boolean;
 }
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -70,6 +71,7 @@ export default function CustomDatePicker({
   open,
   onOpen,
   onClose,
+  shouldDisableDate,
 }: CustomDatePickerProps) {
   const { t, i18n } = useTranslation('common');
   const [isOpen, setIsOpen] = React.useState(false);
@@ -133,6 +135,7 @@ export default function CustomDatePicker({
           minDate={minDate}
           maxDate={maxDate}
           format="DD/MM/YYYY"
+          shouldDisableDate={shouldDisableDate}
           dayOfWeekFormatter={(date) => {
             const dayjsDate = dayjs(date as Date | Dayjs);
             return dayjsDate.format('ddd').toUpperCase();
