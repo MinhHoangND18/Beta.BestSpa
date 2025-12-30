@@ -563,11 +563,22 @@ export default function BookingPage() {
             return;
         }
 
+        // Extract country code from dialCode format: "(+84)" -> "+84"
+        let countryCode = '+84'; // default fallback
+        if (dialCode && typeof dialCode === 'string') {
+            // Remove all non-digit characters and get the numbers
+            const digits = dialCode.replace(/\D/g, '').trim();
+            if (digits && digits.length > 0) {
+                countryCode = `+${digits}`;
+            }
+        }
+
         const orderPayload: CreateBookingOrderDto = {
             customer: {
                 fullName: formData.fullName,
                 phone: formData.phone,
                 email: formData.email,
+                country_code: countryCode,
             },
             booking: {
                 storeId: storeId,

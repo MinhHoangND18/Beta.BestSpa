@@ -75,12 +75,12 @@ export interface BookingFilters {
     status?: BookingStatus;
 }
 
-// --- New DTOs for Creating a Booking Order ---
 
 export interface CustomerForBookingDto {
     fullName: string;
     phone: string;
     email?: string;
+    country_code?: string;
   }
   
 export interface InvoiceItemForBookingDto {
